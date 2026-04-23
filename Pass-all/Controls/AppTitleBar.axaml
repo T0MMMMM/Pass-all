@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lucide="clr-namespace:IconPacks.Avalonia.Lucide;assembly=IconPacks.Avalonia.Lucide"
+             x:Class="Passall.Controls.AppTitleBar">
+
+  <Border Classes="titlebar" PointerPressed="TitleBarPointerPressed">
+    <Grid ColumnDefinitions="Auto,*,Auto" Classes="titlebar-grid">
+
+      <TextBlock Text="PASS-ALL" Classes="titlebar-logo" VerticalAlignment="Center" />
+
+      <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Classes="titlebar-controls">
+        <Button Classes="titlebar-btn" Click="MinimizeClick" Cursor="Hand">
+          <ContentControl Classes="titlebar-icon-default">
+            <lucide:Lucide Kind="Minus" Width="11" Height="11" />
+          </ContentControl>
+        </Button>
+        <Button Classes="titlebar-btn" Click="MaximizeClick" Cursor="Hand">
+          <ContentControl Classes="titlebar-icon-default">
+            <lucide:Lucide Kind="Square" Width="11" Height="11" />
+          </ContentControl>
+        </Button>
+        <Button Classes="titlebar-btn" Click="CloseClick" Cursor="Hand">
+          <ContentControl Classes="titlebar-icon-close">
+            <lucide:Lucide Kind="X" Width="11" Height="11" />
+          </ContentControl>
+        </Button>
+      </StackPanel>
+
+    </Grid>
+  </Border>
+
+</UserControl>

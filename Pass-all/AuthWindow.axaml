@@ -1,0 +1,235 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:lucide="clr-namespace:IconPacks.Avalonia.Lucide;assembly=IconPacks.Avalonia.Lucide"
+        xmlns:controls="clr-namespace:Passall.Controls"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="700"
+        x:Class="Passall.AuthWindow"
+        Title="Pass-all"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        WindowStartupLocation="CenterScreen"
+        Width="900" Height="700">
+
+  <Window.Styles>
+    <StyleInclude Source="avares://Pass-all/Styles/styles.axaml" />
+  </Window.Styles>
+
+  <Panel>
+
+    <Image Source="avares://Pass-all/Assets/background.jpg" Classes="bg-image" />
+    <Border Classes="dark-veil" />
+
+    <Grid RowDefinitions="44,*,50">
+
+      <controls:AppTitleBar Grid.Row="0" />
+
+      <!-- Body : les deux formulaires superposés -->
+      <Panel Grid.Row="1">
+
+        <!-- ── Formulaire Connexion ── -->
+        <StackPanel x:Name="LoginPanel" Classes="auth-panel"
+                    Width="380" HorizontalAlignment="Center" VerticalAlignment="Center">
+
+          <TextBlock Text="Connexion" Classes="login-title" />
+          <TextBlock Text="Accédez à votre coffre-fort de mots de passe" Classes="login-subtitle" />
+
+          <StackPanel Classes="login-field">
+            <TextBlock Text="Identifiant" Classes="login-label" />
+            <Border Classes="login-input-container">
+              <Grid ColumnDefinitions="Auto,*">
+                <ContentControl Grid.Column="0" Classes="login-input-icon">
+                  <lucide:Lucide Kind="User" Width="15" Height="15" />
+                </ContentControl>
+                <TextBox Grid.Column="1" Classes="login-input" Watermark="Votre identifiant…"
+                         x:Name="LoginUsernameBox" />
+              </Grid>
+            </Border>
+          </StackPanel>
+
+          <StackPanel Classes="login-field">
+            <TextBlock Text="Mot de passe maître" Classes="login-label" />
+            <Border Classes="login-input-container">
+              <Grid ColumnDefinitions="Auto,*,Auto">
+                <ContentControl Grid.Column="0" Classes="login-input-icon">
+                  <lucide:Lucide Kind="Lock" Width="15" Height="15" />
+                </ContentControl>
+                <TextBox Grid.Column="1" Classes="login-input" Watermark="Mot de passe maître…"
+                         PasswordChar="●" x:Name="LoginPasswordBox" />
+                <Button Grid.Column="2" Classes="login-eye-btn" Click="ToggleLoginPasswordClick" Cursor="Hand">
+                  <Panel>
+                    <ContentControl x:Name="LoginEyeShow" Classes="login-eye-icon">
+                      <lucide:Lucide Kind="Eye" Width="15" Height="15" />
+                    </ContentControl>
+                    <ContentControl x:Name="LoginEyeHide" Classes="login-eye-icon" IsVisible="False">
+                      <lucide:Lucide Kind="EyeClosed" Width="15" Height="15" />
+                    </ContentControl>
+                  </Panel>
+                </Button>
+              </Grid>
+            </Border>
+          </StackPanel>
+
+          <Button Classes="login-submit-btn" Click="LoginClick" Cursor="Hand">
+            <StackPanel Orientation="Horizontal" Classes="login-submit-inner">
+              <ContentControl Classes="login-submit-icon">
+                <lucide:Lucide Kind="LogIn" Width="16" Height="16" />
+              </ContentControl>
+              <TextBlock Text="Se connecter" Classes="login-submit-text" />
+            </StackPanel>
+          </Button>
+
+          <Border Classes="login-error-box" x:Name="LoginErrorBox" IsVisible="False">
+            <StackPanel Orientation="Horizontal" Classes="login-error-inner">
+              <ContentControl Classes="login-error-icon">
+                <lucide:Lucide Kind="CircleAlert" Width="14" Height="14" />
+              </ContentControl>
+              <TextBlock x:Name="LoginErrorText" Classes="login-error-text" />
+            </StackPanel>
+          </Border>
+
+          <StackPanel Orientation="Horizontal" Classes="login-switch">
+            <TextBlock Text="Pas encore de compte ?" Classes="login-switch-label" />
+            <Button Classes="login-switch-btn" Click="GoToRegisterClick" Cursor="Hand">
+              <TextBlock Text="Créer un compte" Classes="login-switch-link" />
+            </Button>
+          </StackPanel>
+
+        </StackPanel>
+
+        <!-- ── Formulaire Inscription ── -->
+        <StackPanel x:Name="RegisterPanel" Classes="auth-panel"
+                    Width="380" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Opacity="0" IsVisible="False">
+
+          <TextBlock Text="Créer un compte" Classes="login-title" />
+          <TextBlock Text="Bienvenue — configurez votre coffre-fort" Classes="login-subtitle" />
+
+          <StackPanel Classes="login-field">
+            <TextBlock Text="Nom complet" Classes="login-label" />
+            <Border Classes="login-input-container">
+              <Grid ColumnDefinitions="Auto,*">
+                <ContentControl Grid.Column="0" Classes="login-input-icon">
+                  <lucide:Lucide Kind="CircleUser" Width="15" Height="15" />
+                </ContentControl>
+                <TextBox Grid.Column="1" Classes="login-input" Watermark="Votre nom…"
+                         x:Name="RegNameBox" />
+              </Grid>
+            </Border>
+          </StackPanel>
+
+          <StackPanel Classes="login-field">
+            <TextBlock Text="Email" Classes="login-label" />
+            <Border Classes="login-input-container">
+              <Grid ColumnDefinitions="Auto,*">
+                <ContentControl Grid.Column="0" Classes="login-input-icon">
+                  <lucide:Lucide Kind="Mail" Width="15" Height="15" />
+                </ContentControl>
+                <TextBox Grid.Column="1" Classes="login-input" Watermark="votre@email.com"
+                         x:Name="RegEmailBox" />
+              </Grid>
+            </Border>
+          </StackPanel>
+
+          <StackPanel Classes="login-field">
+            <TextBlock Text="Identifiant" Classes="login-label" />
+            <Border Classes="login-input-container">
+              <Grid ColumnDefinitions="Auto,*">
+                <ContentControl Grid.Column="0" Classes="login-input-icon">
+                  <lucide:Lucide Kind="User" Width="15" Height="15" />
+                </ContentControl>
+                <TextBox Grid.Column="1" Classes="login-input" Watermark="Choisissez un identifiant…"
+                         x:Name="RegUsernameBox" />
+              </Grid>
+            </Border>
+          </StackPanel>
+
+          <StackPanel Classes="login-field">
+            <TextBlock Text="Mot de passe maître" Classes="login-label" />
+            <Border Classes="login-input-container">
+              <Grid ColumnDefinitions="Auto,*,Auto">
+                <ContentControl Grid.Column="0" Classes="login-input-icon">
+                  <lucide:Lucide Kind="Lock" Width="15" Height="15" />
+                </ContentControl>
+                <TextBox Grid.Column="1" Classes="login-input" Watermark="Mot de passe maître…"
+                         PasswordChar="●" x:Name="RegPasswordBox" />
+                <Button Grid.Column="2" Classes="login-eye-btn" Click="ToggleRegPasswordClick" Cursor="Hand">
+                  <Panel>
+                    <ContentControl x:Name="RegPasswordEyeShow" Classes="login-eye-icon">
+                      <lucide:Lucide Kind="Eye" Width="15" Height="15" />
+                    </ContentControl>
+                    <ContentControl x:Name="RegPasswordEyeHide" Classes="login-eye-icon" IsVisible="False">
+                      <lucide:Lucide Kind="EyeClosed" Width="15" Height="15" />
+                    </ContentControl>
+                  </Panel>
+                </Button>
+              </Grid>
+            </Border>
+          </StackPanel>
+
+          <StackPanel Classes="login-field">
+            <TextBlock Text="Confirmer le mot de passe" Classes="login-label" />
+            <Border Classes="login-input-container">
+              <Grid ColumnDefinitions="Auto,*,Auto">
+                <ContentControl Grid.Column="0" Classes="login-input-icon">
+                  <lucide:Lucide Kind="ShieldCheck" Width="15" Height="15" />
+                </ContentControl>
+                <TextBox Grid.Column="1" Classes="login-input" Watermark="Répétez le mot de passe…"
+                         PasswordChar="●" x:Name="RegConfirmBox" />
+                <Button Grid.Column="2" Classes="login-eye-btn" Click="ToggleRegConfirmClick" Cursor="Hand">
+                  <Panel>
+                    <ContentControl x:Name="RegConfirmEyeShow" Classes="login-eye-icon">
+                      <lucide:Lucide Kind="Eye" Width="15" Height="15" />
+                    </ContentControl>
+                    <ContentControl x:Name="RegConfirmEyeHide" Classes="login-eye-icon" IsVisible="False">
+                      <lucide:Lucide Kind="EyeClosed" Width="15" Height="15" />
+                    </ContentControl>
+                  </Panel>
+                </Button>
+              </Grid>
+            </Border>
+          </StackPanel>
+
+          <Button Classes="login-submit-btn" Click="RegisterClick" Cursor="Hand">
+            <StackPanel Orientation="Horizontal" Classes="login-submit-inner">
+              <ContentControl Classes="login-submit-icon">
+                <lucide:Lucide Kind="UserPlus" Width="16" Height="16" />
+              </ContentControl>
+              <TextBlock Text="Créer mon compte" Classes="login-submit-text" />
+            </StackPanel>
+          </Button>
+
+          <Border Classes="login-error-box" x:Name="RegErrorBox" IsVisible="False">
+            <StackPanel Orientation="Horizontal" Classes="login-error-inner">
+              <ContentControl Classes="login-error-icon">
+                <lucide:Lucide Kind="CircleAlert" Width="14" Height="14" />
+              </ContentControl>
+              <TextBlock x:Name="RegErrorText" Classes="login-error-text" />
+            </StackPanel>
+          </Border>
+
+          <StackPanel Orientation="Horizontal" Classes="login-switch">
+            <TextBlock Text="Déjà un compte ?" Classes="login-switch-label" />
+            <Button Classes="login-switch-btn" Click="GoToLoginClick" Cursor="Hand">
+              <TextBlock Text="Se connecter" Classes="login-switch-link" />
+            </Button>
+          </StackPanel>
+
+        </StackPanel>
+
+      </Panel>
+
+      <!-- Footer -->
+      <Border Grid.Row="2" Classes="footer">
+        <Grid ColumnDefinitions="*" Classes="footer-grid">
+          <TextBlock Text="Données chiffrées · Stockage local · Aucune connexion requise"
+                     Classes="footer-text" />
+        </Grid>
+      </Border>
+
+    </Grid>
+
+  </Panel>
+
+</Window>

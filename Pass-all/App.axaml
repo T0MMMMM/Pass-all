@@ -1,0 +1,13 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Passall.App"
+			 xmlns:lucide="clr-namespace:IconPacks.Avalonia.Lucide;assembly=IconPacks.Avalonia.Lucide"
+             RequestedThemeVariant="Default">
+
+    <Application.Styles>
+        <FluentTheme />
+		
+		<StyleInclude Source="avares://IconPacks.Avalonia.Lucide/Lucide.axaml" />
+        <StyleInclude Source="avares://Pass-all/Styles/styles.axaml" />
+    </Application.Styles>
+</Application>

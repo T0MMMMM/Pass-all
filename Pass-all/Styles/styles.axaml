@@ -1,0 +1,983 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:lucide="clr-namespace:IconPacks.Avalonia.Lucide;assembly=IconPacks.Avalonia.Lucide">
+
+  <Styles.Resources>
+    <FontFamily x:Key="SpaceGroteskFont">avares://Pass-all/Assets/SpaceGrotesk-Regular.ttf#Space Grotesk</FontFamily>
+  </Styles.Resources>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       FENÊTRE & FOND
+  ══════════════════════════════════════════════════════════════════ -->
+
+  <Style Selector="Window">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="FontFamily" Value="{StaticResource SpaceGroteskFont}" />
+  </Style>
+
+  <!-- Image de fond : flou et remplissage définis ici, pas inline -->
+  <Style Selector="Image.bg-image">
+    <Setter Property="Stretch" Value="UniformToFill" />
+    <Setter Property="Effect">
+      <Setter.Value>
+        <BlurEffect Radius="28" />
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- Voile sombre sur le fond -->
+  <Style Selector="Border.dark-veil">
+    <Setter Property="Background" Value="#44000018" />
+  </Style>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       TITLEBAR
+  ══════════════════════════════════════════════════════════════════ -->
+
+  <Style Selector="Border.titlebar">
+    <Setter Property="Background" Value="#33FFFFFF" />
+    <Setter Property="Height" Value="44" />
+    <Setter Property="BorderBrush" Value="#18FFFFFF" />
+    <Setter Property="BorderThickness" Value="0,0,0,1" />
+  </Style>
+
+  <Style Selector="Grid.titlebar-grid">
+    <Setter Property="Margin" Value="20,0" />
+  </Style>
+
+  <Style Selector="StackPanel.titlebar-brand">
+    <Setter Property="Spacing" Value="10" />
+  </Style>
+
+  <Style Selector="StackPanel.titlebar-controls">
+    <Setter Property="Spacing" Value="2" />
+  </Style>
+
+  <Style Selector="ContentControl.titlebar-logo-icon">
+    <Setter Property="Foreground" Value="#00D2FF" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="TextBlock.titlebar-logo">
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="LetterSpacing" Value="4" />
+    <Setter Property="FontSize" Value="14" />
+  </Style>
+
+  <!-- Boutons de la titlebar -->
+  <Style Selector="Button.titlebar-btn">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Width" Value="40" />
+    <Setter Property="Height" Value="32" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="Padding" Value="0" />
+  </Style>
+  <Style Selector="Button.titlebar-btn /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.titlebar-btn:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.titlebar-btn:pressed /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+  <!-- Icônes des boutons titlebar : transition scale -->
+  <Style Selector="Button.titlebar-btn > ContentControl">
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" Easing="CubicEaseOut" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Button.titlebar-btn:pointerover > ContentControl">
+    <Setter Property="RenderTransform" Value="scale(1.2)" />
+  </Style>
+  <Style Selector="Button.titlebar-btn:pressed > ContentControl">
+    <Setter Property="RenderTransform" Value="scale(0.85)" />
+  </Style>
+
+  <!-- Couleur icône : minimiser / maximiser -->
+  <Style Selector="ContentControl.titlebar-icon-default">
+    <Setter Property="Foreground" Value="#CCFFFFFF" />
+  </Style>
+
+  <!-- Couleur icône : fermer (rouge macOS) -->
+  <Style Selector="ContentControl.titlebar-icon-close">
+    <Setter Property="Foreground" Value="#FF5F57" />
+  </Style>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════════════════════════════ -->
+
+  <Style Selector="Border.sidebar">
+    <Setter Property="Background" Value="#14FFFFFF" />
+    <Setter Property="BorderBrush" Value="#1EFFFFFF" />
+    <Setter Property="BorderThickness" Value="0,0,1,0" />
+  </Style>
+
+  <Style Selector="StackPanel.sidebar-content">
+    <Setter Property="Spacing" Value="0" />
+    <Setter Property="Margin" Value="0,16,0,0" />
+  </Style>
+
+  <Style Selector="TextBlock.sidebar-section-label">
+    <Setter Property="Foreground" Value="#55FFFFFF" />
+    <Setter Property="FontSize" Value="10" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="LetterSpacing" Value="2" />
+    <Setter Property="Margin" Value="18,0,18,8" />
+  </Style>
+
+  <!-- Variante : label de section à l'intérieur d'un StackPanel.sidebar-section -->
+  <Style Selector="TextBlock.sidebar-section-label-inner">
+    <Setter Property="Margin" Value="0,0,0,8" />
+  </Style>
+
+  <Style Selector="StackPanel.sidebar-section">
+    <Setter Property="Margin" Value="18,0,18,0" />
+    <Setter Property="Spacing" Value="4" />
+  </Style>
+
+  <Style Selector="Separator.sidebar-separator">
+    <Setter Property="Background" Value="#18FFFFFF" />
+    <Setter Property="Height" Value="1" />
+    <Setter Property="Margin" Value="0,14" />
+  </Style>
+
+  <!-- Liste de catégories -->
+  <Style Selector="ListBox.category-list">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="8,0" />
+  </Style>
+  <Style Selector="ListBox.category-list /template/ ScrollViewer">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+  <Style Selector="ListBox.category-list ListBoxItem">
+    <Setter Property="Foreground" Value="#99FFFFFF" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Padding" Value="12,9" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Margin" Value="0,2" />
+    <Setter Property="Cursor" Value="Hand" />
+  </Style>
+  <Style Selector="ListBox.category-list ListBoxItem /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="ListBox.category-list ListBoxItem:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="#14FFFFFF" />
+  </Style>
+  <Style Selector="ListBox.category-list ListBoxItem:selected /template/ ContentPresenter">
+    <Setter Property="Background" Value="#2EFFFFFF" />
+  </Style>
+  <Style Selector="ListBox.category-list ListBoxItem:selected">
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+
+  <Style Selector="StackPanel.category-item-inner">
+    <Setter Property="Spacing" Value="10" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <!-- Bascule affichage mots de passe -->
+  <Style Selector="ToggleSwitch.password-toggle">
+    <Setter Property="Foreground" Value="#BBFFFFFF" />
+    <Setter Property="FontSize" Value="12" />
+  </Style>
+
+  <!-- Statistiques -->
+  <Style Selector="Grid.stat-row">
+    <Setter Property="Margin" Value="0,3" />
+  </Style>
+
+  <Style Selector="TextBlock.stat-label">
+    <Setter Property="Foreground" Value="#88FFFFFF" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="Border.stat-badge">
+    <Setter Property="Background" Value="#22FFFFFF" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Padding" Value="8,2" />
+  </Style>
+  <Style Selector="Border.stat-badge-green">
+    <Setter Property="Background" Value="#2200D26C" />
+  </Style>
+  <Style Selector="Border.stat-badge-orange">
+    <Setter Property="Background" Value="#22FF9500" />
+  </Style>
+
+  <Style Selector="Border.stat-badge TextBlock.stat-count">
+    <Setter Property="Foreground" Value="#CCFFFFFF" />
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       CONTENU PRINCIPAL
+  ══════════════════════════════════════════════════════════════════ -->
+
+  <Style Selector="Grid.main-content">
+    <Setter Property="Margin" Value="24,20,24,14" />
+  </Style>
+
+  <!-- Zone de recherche -->
+  <Style Selector="Grid.search-area">
+    <Setter Property="Margin" Value="0,0,0,16" />
+  </Style>
+
+  <!-- Container de la barre de recherche -->
+  <Style Selector="Border.search-container">
+    <Setter Property="Background" Value="#2AFFFFFF" />
+    <Setter Property="BorderBrush" Value="#45FFFFFF" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Height" Value="40" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.15" />
+        <BrushTransition Property="BorderBrush" Duration="0:0:0.15" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Border.search-container:focus-within">
+    <Setter Property="Background" Value="#3EFFFFFF" />
+    <Setter Property="BorderBrush" Value="#75FFFFFF" />
+  </Style>
+
+  <Style Selector="TextBox.search">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="Padding" Value="14,0,0,0" />
+    <Setter Property="CaretBrush" Value="White" />
+  </Style>
+  <Style Selector="TextBox.search:focus /template/ Border">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+  </Style>
+
+  <Style Selector="Button.search-btn">
+    <Setter Property="Background" Value="#30FFFFFF" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="0,8,8,0" />
+    <Setter Property="Width" Value="40" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.15" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Button.search-btn /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.search-btn:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.search-btn:pointerover">
+    <Setter Property="Background" Value="#50FFFFFF" />
+  </Style>
+
+  <Style Selector="ContentControl.search-icon">
+    <Setter Property="Foreground" Value="#AAFFFFFF" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <!-- ComboBox de tri -->
+  <Style Selector="ComboBox.sort-combo">
+    <Setter Property="Background" Value="#2AFFFFFF" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="BorderBrush" Value="#45FFFFFF" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Height" Value="40" />
+    <Setter Property="MinWidth" Value="140" />
+    <Setter Property="Padding" Value="12,0,4,0" />
+    <Setter Property="Margin" Value="10,0,0,0" />
+  </Style>
+
+  <!-- Bouton ajouter : fond glassmorphisme -->
+  <Style Selector="Button.add-btn">
+    <Setter Property="Background" Value="#2A00D2FF" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Width" Value="40" />
+    <Setter Property="Height" Value="40" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Margin" Value="10,0,0,0" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.15" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Button.add-btn /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.add-btn:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.add-btn:pointerover">
+    <Setter Property="Background" Value="#4400D2FF" />
+  </Style>
+  <Style Selector="Button.add-btn:pressed /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.add-btn > ContentControl">
+    <Setter Property="Transitions">
+      <Transitions>
+        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" Easing="CubicEaseOut" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Button.add-btn:pressed > ContentControl">
+    <Setter Property="RenderTransform" Value="scale(0.88)" />
+  </Style>
+
+  <!-- Icône ajouter (cyan) -->
+  <Style Selector="ContentControl.add-icon">
+    <Setter Property="Foreground" Value="#00D2FF" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <!-- En-tête de section -->
+  <Style Selector="Grid.section-header">
+    <Setter Property="Margin" Value="0,0,0,12" />
+  </Style>
+
+  <Style Selector="TextBlock.section-title">
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="Border.count-badge">
+    <Setter Property="Background" Value="#22FFFFFF" />
+    <Setter Property="BorderBrush" Value="#33FFFFFF" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Padding" Value="12,4" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+  <Style Selector="TextBlock.count-text">
+    <Setter Property="Foreground" Value="#99FFFFFF" />
+    <Setter Property="FontSize" Value="11" />
+  </Style>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       CARTES DE COMPTES
+  ══════════════════════════════════════════════════════════════════ -->
+
+  <Style Selector="StackPanel.account-list">
+    <Setter Property="Spacing" Value="0" />
+  </Style>
+
+  <Style Selector="Border.account-card">
+    <Setter Property="Background" Value="#18FFFFFF" />
+    <Setter Property="CornerRadius" Value="14" />
+    <Setter Property="BorderBrush" Value="#38FFFFFF" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Margin" Value="0,0,0,10" />
+    <Setter Property="Padding" Value="16,14" />
+    <Setter Property="BoxShadow" Value="0 8 32 0 #44000000, 0 1 0 0 #28FFFFFF inset" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.18" />
+        <BrushTransition Property="BorderBrush" Duration="0:0:0.18" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Border.account-card:pointerover">
+    <Setter Property="Background" Value="#2AFFFFFF" />
+    <Setter Property="BorderBrush" Value="#65FFFFFF" />
+    <Setter Property="BoxShadow" Value="0 12 40 0 #55000000, 0 1 0 0 #45FFFFFF inset" />
+  </Style>
+
+  <!-- Icône colorée du service (cercle) -->
+  <Style Selector="Border.service-icon">
+    <Setter Property="Width" Value="44" />
+    <Setter Property="Height" Value="44" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+  <Style Selector="Border.service-icon-red">
+    <Setter Property="Background" Value="#CC4285F4" />
+  </Style>
+  <Style Selector="Border.service-icon-dark">
+    <Setter Property="Background" Value="#CC2D333B" />
+    <Setter Property="BorderBrush" Value="#44FFFFFF" />
+    <Setter Property="BorderThickness" Value="1" />
+  </Style>
+  <Style Selector="Border.service-icon-red-dark">
+    <Setter Property="Background" Value="#CCE50914" />
+  </Style>
+  <Style Selector="Border.service-icon-purple">
+    <Setter Property="Background" Value="#CC5865F2" />
+  </Style>
+  <Style Selector="Border.service-icon-orange">
+    <Setter Property="Background" Value="#CCFF9900" />
+  </Style>
+  <Style Selector="Border.service-icon-green">
+    <Setter Property="Background" Value="#CC1DB954" />
+  </Style>
+
+  <Style Selector="TextBlock.service-icon-letter">
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <!-- Bloc d'informations du compte -->
+  <Style Selector="StackPanel.account-info">
+    <Setter Property="Margin" Value="14,0,0,0" />
+    <Setter Property="Spacing" Value="2" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="TextBlock.account-name">
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="FontSize" Value="14" />
+  </Style>
+
+  <Style Selector="TextBlock.account-category">
+    <Setter Property="Foreground" Value="#66FFFFFF" />
+    <Setter Property="FontSize" Value="11" />
+  </Style>
+
+  <Style Selector="TextBlock.account-login">
+    <Setter Property="Foreground" Value="#AAFFFFFF" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="Margin" Value="0,2,0,0" />
+  </Style>
+
+  <!-- Barre de force du mot de passe -->
+  <Style Selector="ProgressBar.strength-bar">
+    <Setter Property="Height" Value="3" />
+    <Setter Property="CornerRadius" Value="2" />
+    <Setter Property="Background" Value="#20FFFFFF" />
+    <Setter Property="Margin" Value="0,4,0,0" />
+    <Setter Property="MaxWidth" Value="200" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="MinWidth" Value="120" />
+  </Style>
+  <Style Selector="ProgressBar.strength-bar-high">
+    <Setter Property="Foreground" Value="#CC00D26C" />
+  </Style>
+  <Style Selector="ProgressBar.strength-bar-medium">
+    <Setter Property="Foreground" Value="#CCFF9500" />
+  </Style>
+  <Style Selector="ProgressBar.strength-bar-low">
+    <Setter Property="Foreground" Value="#CCFF4F4F" />
+  </Style>
+
+  <!-- Mot de passe masqué -->
+  <Style Selector="TextBlock.account-password">
+    <Setter Property="Foreground" Value="#66FFFFFF" />
+    <Setter Property="LetterSpacing" Value="4" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Margin" Value="20,0" />
+  </Style>
+
+  <!-- Actions sur la carte (œil, copier) -->
+  <Style Selector="StackPanel.account-actions">
+    <Setter Property="Spacing" Value="4" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="ContentControl.account-action-icon">
+    <Setter Property="Foreground" Value="#88FFFFFF" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       BOUTON ICÔNE GÉNÉRIQUE
+  ══════════════════════════════════════════════════════════════════ -->
+
+  <Style Selector="Button.icon-btn">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="4" />
+  </Style>
+  <Style Selector="Button.icon-btn /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.icon-btn:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.icon-btn:pressed /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+  <Style Selector="Button.icon-btn > ContentControl">
+    <Setter Property="Transitions">
+      <Transitions>
+        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" Easing="CubicEaseOut" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Button.icon-btn:pointerover > ContentControl">
+    <Setter Property="RenderTransform" Value="scale(1.2)" />
+  </Style>
+  <Style Selector="Button.icon-btn:pressed > ContentControl">
+    <Setter Property="RenderTransform" Value="scale(0.88)" />
+  </Style>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════════════════════════════ -->
+
+  <Style Selector="Border.footer">
+    <Setter Property="Background" Value="#11FFFFFF" />
+    <Setter Property="BorderBrush" Value="#14FFFFFF" />
+    <Setter Property="BorderThickness" Value="0,1,0,0" />
+  </Style>
+
+  <Style Selector="Grid.footer-grid">
+    <Setter Property="Margin" Value="20,0" />
+  </Style>
+
+  <Style Selector="ContentControl.footer-icon">
+    <Setter Property="Foreground" Value="#55FFFFFF" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="TextBlock.footer-text">
+    <Setter Property="Foreground" Value="#44FFFFFF" />
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       OVERLAYS (Aide & Paramètres)
+  ══════════════════════════════════════════════════════════════════ -->
+
+  <Style Selector="Border.overlay-backdrop">
+    <Setter Property="Background" Value="#E8080814" />
+  </Style>
+
+  <Style Selector="Border.overlay-card">
+    <Setter Property="Background" Value="#1EFFFFFF" />
+    <Setter Property="BorderBrush" Value="#40FFFFFF" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="Padding" Value="28,24" />
+    <Setter Property="Width" Value="480" />
+    <Setter Property="BoxShadow" Value="0 20 60 0 #66000000" />
+  </Style>
+
+  <Style Selector="StackPanel.overlay-content">
+    <Setter Property="Spacing" Value="16" />
+  </Style>
+
+  <Style Selector="TextBlock.overlay-title">
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="FontSize" Value="20" />
+  </Style>
+
+  <Style Selector="ContentControl.overlay-close-icon">
+    <Setter Property="Foreground" Value="#AAFFFFFF" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <!-- ── Overlay Aide ── -->
+
+  <Style Selector="TextBlock.help-subtitle">
+    <Setter Property="Foreground" Value="#DDFFFFFF" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="FontSize" Value="13" />
+  </Style>
+
+  <Style Selector="StackPanel.help-steps">
+    <Setter Property="Spacing" Value="8" />
+  </Style>
+
+  <Style Selector="TextBlock.help-item">
+    <Setter Property="Foreground" Value="#99FFFFFF" />
+    <Setter Property="FontSize" Value="12" />
+  </Style>
+
+  <Style Selector="Border.help-info-box">
+    <Setter Property="Background" Value="#18FFFFFF" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Padding" Value="14,10" />
+    <Setter Property="BorderBrush" Value="#22FFFFFF" />
+    <Setter Property="BorderThickness" Value="1" />
+  </Style>
+
+  <Style Selector="TextBlock.help-info-text">
+    <Setter Property="Foreground" Value="#77FFFFFF" />
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+  </Style>
+
+  <!-- ── Overlay Paramètres ── -->
+
+  <Style Selector="Border.settings-row">
+    <Setter Property="Background" Value="#14FFFFFF" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="BorderBrush" Value="#28FFFFFF" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Padding" Value="16,12" />
+  </Style>
+
+  <Style Selector="TextBlock.settings-row-title">
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="FontSize" Value="13" />
+  </Style>
+
+  <Style Selector="TextBlock.settings-row-desc">
+    <Setter Property="Foreground" Value="#66FFFFFF" />
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="Margin" Value="0,3,0,0" />
+  </Style>
+
+  <Style Selector="ToggleSwitch.settings-toggle">
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="FontSize" Value="12" />
+  </Style>
+
+  <Style Selector="NumericUpDown.settings-numeric">
+    <Setter Property="Background" Value="#2AFFFFFF" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="BorderBrush" Value="#45FFFFFF" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Width" Value="90" />
+    <Setter Property="Padding" Value="8,4" />
+  </Style>
+
+  <!-- Bouton annuler dans les formulaires -->
+  <Style Selector="Button.cat-cancel-btn">
+    <Setter Property="Background" Value="#22FFFFFF" />
+    <Setter Property="BorderBrush" Value="#33FFFFFF" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Height" Value="50" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.15" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Button.cat-cancel-btn /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+  </Style>
+  <Style Selector="Button.cat-cancel-btn:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.cat-cancel-btn:pointerover">
+    <Setter Property="Background" Value="#33FFFFFF" />
+  </Style>
+  <Style Selector="Button.cat-cancel-btn:pressed /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+  <!-- ComboBox dans les formulaires (pleine largeur, hauteur input) -->
+  <Style Selector="ComboBox.form-combo">
+    <Setter Property="Background" Value="#2AFFFFFF" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="BorderBrush" Value="#45FFFFFF" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Height" Value="50" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="Padding" Value="14,0,4,0" />
+  </Style>
+
+  <Style Selector="ComboBox.settings-combo">
+    <Setter Property="Background" Value="#2AFFFFFF" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="BorderBrush" Value="#45FFFFFF" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Height" Value="36" />
+    <Setter Property="MinWidth" Value="110" />
+    <Setter Property="Padding" Value="10,0,4,0" />
+  </Style>
+
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       PAGE CONNEXION
+  ══════════════════════════════════════════════════════════════════ -->
+
+  <!-- Formulaire centré -->
+  <Style Selector="StackPanel.login-form">
+    <Setter Property="Spacing" Value="0" />
+    <Setter Property="Width" Value="380" />
+  </Style>
+
+  <!-- Icône shield -->
+  <Style Selector="ContentControl.login-shield-icon">
+    <Setter Property="Foreground" Value="#00D2FF" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="Margin" Value="0,0,0,18" />
+  </Style>
+
+  <!-- Titre "Connexion" -->
+  <Style Selector="TextBlock.login-title">
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="FontSize" Value="42" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="LetterSpacing" Value="1" />
+    <Setter Property="Margin" Value="0,0,0,8" />
+  </Style>
+
+  <!-- Sous-titre -->
+  <Style Selector="TextBlock.login-subtitle">
+    <Setter Property="Foreground" Value="#66FFFFFF" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="Margin" Value="0,0,0,24" />
+  </Style>
+
+  <!-- Groupe label + input -->
+  <Style Selector="StackPanel.login-field">
+    <Setter Property="Spacing" Value="7" />
+    <Setter Property="Margin" Value="0,0,0,14" />
+  </Style>
+
+  <!-- Label de champ -->
+  <Style Selector="TextBlock.login-label">
+    <Setter Property="Foreground" Value="#BBFFFFFF" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="LetterSpacing" Value="1" />
+  </Style>
+
+  <!-- Conteneur de l'input -->
+  <Style Selector="Border.login-input-container">
+    <Setter Property="Background" Value="#2AFFFFFF" />
+    <Setter Property="BorderBrush" Value="#45FFFFFF" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Height" Value="50" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.15" />
+        <BrushTransition Property="BorderBrush" Duration="0:0:0.15" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Border.login-input-container:focus-within">
+    <Setter Property="Background" Value="#3EFFFFFF" />
+    <Setter Property="BorderBrush" Value="#8800D2FF" />
+  </Style>
+
+  <!-- Icône à gauche de l'input -->
+  <Style Selector="ContentControl.login-input-icon">
+    <Setter Property="Foreground" Value="#66FFFFFF" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Margin" Value="16,0,0,0" />
+  </Style>
+
+  <!-- TextBox de l'input -->
+  <Style Selector="TextBox.login-input">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="Padding" Value="12,0,0,0" />
+    <Setter Property="CaretBrush" Value="#00D2FF" />
+    <Setter Property="FontSize" Value="14" />
+  </Style>
+  <Style Selector="TextBox.login-input:focus /template/ Border">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+  </Style>
+
+  <!-- Bouton œil (afficher/masquer mdp) -->
+  <Style Selector="Button.login-eye-btn">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Width" Value="44" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="CornerRadius" Value="0,12,12,0" />
+  </Style>
+  <Style Selector="Button.login-eye-btn /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.login-eye-btn:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="ContentControl.login-eye-icon">
+    <Setter Property="Foreground" Value="#66FFFFFF" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Foreground" Duration="0:0:0.15" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Button.login-eye-btn:pointerover ContentControl.login-eye-icon">
+    <Setter Property="Foreground" Value="#CCFFFFFF" />
+  </Style>
+
+  <!-- Bouton Se connecter -->
+  <Style Selector="Button.login-submit-btn">
+    <Setter Property="Background" Value="#CC00A8D4" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Height" Value="50" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Margin" Value="0,8,0,0" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.15" />
+        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.12" Easing="CubicEaseOut" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Button.login-submit-btn /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+  </Style>
+  <Style Selector="Button.login-submit-btn:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.login-submit-btn:pointerover">
+    <Setter Property="Background" Value="#FF00B8D9" />
+    <Setter Property="RenderTransform" Value="translateY(-1px)" />
+  </Style>
+  <Style Selector="Button.login-submit-btn:pressed">
+    <Setter Property="RenderTransform" Value="scale(0.97)" />
+  </Style>
+  <Style Selector="Button.login-submit-btn:pressed /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+  <!-- Contenu interne du bouton -->
+  <Style Selector="StackPanel.login-submit-inner">
+    <Setter Property="Spacing" Value="10" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="ContentControl.login-submit-icon">
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="TextBlock.login-submit-text">
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="FontSize" Value="15" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="LetterSpacing" Value="0.5" />
+  </Style>
+
+  <!-- Boîte d'erreur -->
+  <Style Selector="Border.login-error-box">
+    <Setter Property="Background" Value="#22FF4F4F" />
+    <Setter Property="BorderBrush" Value="#44FF4F4F" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Padding" Value="14,10" />
+    <Setter Property="Margin" Value="0,12,0,0" />
+  </Style>
+
+  <Style Selector="StackPanel.login-error-inner">
+    <Setter Property="Spacing" Value="8" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="ContentControl.login-error-icon">
+    <Setter Property="Foreground" Value="#FF6B6B" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="TextBlock.login-error-text">
+    <Setter Property="Foreground" Value="#FF9999" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+  </Style>
+
+  <!-- Lien de navigation login ↔ register -->
+  <Style Selector="StackPanel.login-switch">
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="Spacing" Value="4" />
+    <Setter Property="Margin" Value="0,20,0,0" />
+  </Style>
+
+  <Style Selector="TextBlock.login-switch-label">
+    <Setter Property="Foreground" Value="#55FFFFFF" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="Button.login-switch-btn">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="0" />
+  </Style>
+  <Style Selector="Button.login-switch-btn /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.login-switch-btn:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.login-switch-btn:pressed /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+  <Style Selector="TextBlock.login-switch-link">
+    <Setter Property="Foreground" Value="#00D2FF" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Foreground" Duration="0:0:0.15" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Button.login-switch-btn:pointerover TextBlock.login-switch-link">
+    <Setter Property="Foreground" Value="#66E8FF" />
+  </Style>
+
+  <!-- ── Transition entre les deux formulaires dans AuthWindow ── -->
+  <Style Selector="StackPanel.auth-panel">
+    <Setter Property="Transitions">
+      <Transitions>
+        <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="CubicEaseOut" />
+      </Transitions>
+    </Setter>
+  </Style>
+
+</Styles>
