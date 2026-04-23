@@ -20,7 +20,7 @@
     <Setter Property="Stretch" Value="UniformToFill" />
     <Setter Property="Effect">
       <Setter.Value>
-        <BlurEffect Radius="28" />
+        <BlurEffect Radius="55" />
       </Setter.Value>
     </Setter>
   </Style>
@@ -672,11 +672,10 @@
     <Setter Property="Padding" Value="8,4" />
   </Style>
 
-  <!-- Bouton annuler dans les formulaires -->
+  <!-- Bouton annuler dans les formulaires (sans border) -->
   <Style Selector="Button.cat-cancel-btn">
     <Setter Property="Background" Value="#22FFFFFF" />
-    <Setter Property="BorderBrush" Value="#33FFFFFF" />
-    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="BorderThickness" Value="0" />
     <Setter Property="CornerRadius" Value="12" />
     <Setter Property="Height" Value="50" />
     <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -699,6 +698,70 @@
     <Setter Property="Background" Value="#33FFFFFF" />
   </Style>
   <Style Selector="Button.cat-cancel-btn:pressed /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+  <!-- Bouton enregistrer dans les formulaires inline (avec border cyan) -->
+  <Style Selector="Button.form-save-btn">
+    <Setter Property="Background" Value="#CC1DB954" />
+    <Setter Property="BorderBrush" Value="#9922C55E" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Height" Value="50" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.15" />
+        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.12" Easing="CubicEaseOut" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Button.form-save-btn /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+  </Style>
+  <Style Selector="Button.form-save-btn:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.form-save-btn:pointerover">
+    <Setter Property="Background" Value="#FF22C55E" />
+    <Setter Property="RenderTransform" Value="translateY(-1px)" />
+  </Style>
+  <Style Selector="Button.form-save-btn:pressed /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.form-save-btn:pressed">
+    <Setter Property="RenderTransform" Value="scale(0.97)" />
+  </Style>
+
+  <!-- Bouton supprimer dans les formulaires (rouge) -->
+  <Style Selector="Button.delete-btn">
+    <Setter Property="Background" Value="#CCDC2626" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Height" Value="50" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.15" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Button.delete-btn /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+  </Style>
+  <Style Selector="Button.delete-btn:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.delete-btn:pointerover">
+    <Setter Property="Background" Value="#FFEF4444" />
+  </Style>
+  <Style Selector="Button.delete-btn:pressed /template/ ContentPresenter">
     <Setter Property="Background" Value="Transparent" />
   </Style>
 
@@ -969,6 +1032,73 @@
   </Style>
   <Style Selector="Button.login-switch-btn:pointerover TextBlock.login-switch-link">
     <Setter Property="Foreground" Value="#66E8FF" />
+  </Style>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       CARTE AJOUT INLINE (profils & catégories)
+  ══════════════════════════════════════════════════════════════════ -->
+
+  <!-- Conteneur outer (toujours visible, border permanente) -->
+  <Style Selector="Border.add-expand-card">
+    <Setter Property="Background" Value="#18FFFFFF" />
+    <Setter Property="BorderBrush" Value="#44FFFFFF" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="14" />
+    <Setter Property="Margin" Value="0,0,0,10" />
+    <Setter Property="Padding" Value="16,14" />
+    <Setter Property="BoxShadow" Value="0 8 32 0 #33000000, 0 1 0 0 #22FFFFFF inset" />
+  </Style>
+
+  <!-- Bouton déclencheur (stretch, centré) -->
+  <Style Selector="Button.add-expand-trigger">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="MinHeight" Value="44" />
+  </Style>
+  <Style Selector="Button.add-expand-trigger /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+  </Style>
+  <Style Selector="Button.add-expand-trigger:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="Button.add-expand-trigger:pressed /template/ ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+  <!-- Icône du déclencheur -->
+  <Style Selector="ContentControl.add-card-icon">
+    <Setter Property="Foreground" Value="#55FFFFFF" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Foreground" Duration="0:0:0.18" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Button.add-expand-trigger:pointerover ContentControl.add-card-icon">
+    <Setter Property="Foreground" Value="#AAFFFFFF" />
+  </Style>
+
+  <!-- Texte du déclencheur -->
+  <Style Selector="TextBlock.add-card-text">
+    <Setter Property="Foreground" Value="#55FFFFFF" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Foreground" Duration="0:0:0.18" />
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="Button.add-expand-trigger:pointerover TextBlock.add-card-text">
+    <Setter Property="Foreground" Value="#DDFFFFFF" />
   </Style>
 
   <!-- ── Transition entre les deux formulaires dans AuthWindow ── -->

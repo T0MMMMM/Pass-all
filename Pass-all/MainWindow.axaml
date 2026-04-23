@@ -39,7 +39,7 @@
         <!-- ══ Vue principale ══ -->
         <Grid x:Name="MainView" RowDefinitions="Auto,Auto,*" Classes="main-content">
 
-          <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" Classes="search-area">
+          <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Classes="search-area">
             <Border Grid.Column="0" Classes="search-container">
               <Grid ColumnDefinitions="*,Auto">
                 <TextBox Grid.Column="0" Classes="search" Watermark="Rechercher un compte..." />
@@ -55,11 +55,6 @@
               <ComboBoxItem>Récents</ComboBoxItem>
               <ComboBoxItem>Catégorie</ComboBoxItem>
             </ComboBox>
-            <Button Grid.Column="2" Classes="add-btn" Click="AddProfileClick" Cursor="Hand">
-              <ContentControl Classes="add-icon">
-                <lucide:Lucide Kind="CirclePlus" Width="22" Height="22" />
-              </ContentControl>
-            </Button>
           </Grid>
 
           <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Classes="section-header">
@@ -70,55 +65,288 @@
           </Grid>
 
           <ScrollViewer Grid.Row="2">
+            <StackPanel>
             <ItemsControl x:Name="ProfileItemsControl">
               <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="modeles:DBUserProfile">
-                  <Border Classes="account-card">
-                    <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                  <Border Classes="account-card" Tag="{Binding}" PointerPressed="ProfileCardPointerPressed" Cursor="Hand">
+                    <StackPanel>
 
-                      <!-- Icône : couleur de catégorie + première lettre du nom -->
-                      <Border Grid.Column="0"
-                              Width="44" Height="44" CornerRadius="12"
-                              VerticalAlignment="Center"
-                              Background="{Binding Category.Color, Converter={StaticResource ColorBrushConverter}}">
-                        <TextBlock Text="{Binding Name, Converter={StaticResource FirstLetterConverter}}"
-                                   Classes="service-icon-letter" />
+                      <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+
+                        <!-- Icône : couleur de catégorie + première lettre du nom -->
+                        <Border Grid.Column="0"
+                                Width="44" Height="44" CornerRadius="12"
+                                VerticalAlignment="Center"
+                                Background="{Binding Category.Color, Converter={StaticResource ColorBrushConverter}}">
+                          <TextBlock Text="{Binding Name, Converter={StaticResource FirstLetterConverter}}"
+                                     Classes="service-icon-letter" />
+                        </Border>
+
+                        <!-- Infos -->
+                        <StackPanel Grid.Column="1" Classes="account-info">
+                          <TextBlock Text="{Binding Name}" Classes="account-name" />
+                          <TextBlock Text="{Binding Category.Label}" Classes="account-category" />
+                          <TextBlock Text="{Binding Login}" Classes="account-login" />
+                        </StackPanel>
+
+                        <!-- Mot de passe -->
+                        <TextBlock Grid.Column="2" Text="••••••••••••" Classes="account-password" />
+
+                        <!-- Actions -->
+                        <StackPanel Grid.Column="3" Orientation="Horizontal" Classes="account-actions">
+                          <Button Classes="icon-btn" Tag="{Binding}" Click="ToggleProfilePasswordClick" Cursor="Hand">
+                            <Panel>
+                              <ContentControl Classes="account-action-icon">
+                                <lucide:Lucide Kind="Eye" Width="15" Height="15" />
+                              </ContentControl>
+                              <ContentControl Classes="account-action-icon" IsVisible="False">
+                                <lucide:Lucide Kind="EyeClosed" Width="15" Height="15" />
+                              </ContentControl>
+                            </Panel>
+                          </Button>
+                          <Button Classes="icon-btn" Tag="{Binding}" Click="CopyProfilePasswordClick" Cursor="Hand">
+                            <ContentControl Classes="account-action-icon">
+                              <lucide:Lucide Kind="Copy" Width="15" Height="15" />
+                            </ContentControl>
+                          </Button>
+                        </StackPanel>
+
+                      </Grid>
+
+                      <!-- Formulaire d'édition -->
+                      <Border Tag="edit-form" MaxHeight="0" ClipToBounds="True">
+                        <Border.Transitions>
+                          <Transitions>
+                            <DoubleTransition Property="MaxHeight" Duration="0:0:0.32" Easing="CubicEaseInOut" />
+                          </Transitions>
+                        </Border.Transitions>
+                        <StackPanel Margin="0,12,0,0">
+
+                          <StackPanel Classes="login-field">
+                            <TextBlock Text="Nom du service" Classes="login-label" />
+                            <Border Classes="login-input-container">
+                              <Grid ColumnDefinitions="Auto,*">
+                                <ContentControl Grid.Column="0" Classes="login-input-icon">
+                                  <lucide:Lucide Kind="Globe" Width="15" Height="15" />
+                                </ContentControl>
+                                <TextBox Grid.Column="1" Tag="Name" Classes="login-input" Watermark="Google, GitHub…" />
+                              </Grid>
+                            </Border>
+                          </StackPanel>
+
+                          <StackPanel Classes="login-field">
+                            <TextBlock Text="Identifiant" Classes="login-label" />
+                            <Border Classes="login-input-container">
+                              <Grid ColumnDefinitions="Auto,*">
+                                <ContentControl Grid.Column="0" Classes="login-input-icon">
+                                  <lucide:Lucide Kind="User" Width="15" Height="15" />
+                                </ContentControl>
+                                <TextBox Grid.Column="1" Tag="Login" Classes="login-input" Watermark="Votre identifiant…" />
+                              </Grid>
+                            </Border>
+                          </StackPanel>
+
+                          <StackPanel Classes="login-field">
+                            <TextBlock Text="Email" Classes="login-label" />
+                            <Border Classes="login-input-container">
+                              <Grid ColumnDefinitions="Auto,*">
+                                <ContentControl Grid.Column="0" Classes="login-input-icon">
+                                  <lucide:Lucide Kind="Mail" Width="15" Height="15" />
+                                </ContentControl>
+                                <TextBox Grid.Column="1" Tag="Email" Classes="login-input" Watermark="votre@email.com" />
+                              </Grid>
+                            </Border>
+                          </StackPanel>
+
+                          <StackPanel Classes="login-field">
+                            <TextBlock Text="URL du site" Classes="login-label" />
+                            <Border Classes="login-input-container">
+                              <Grid ColumnDefinitions="Auto,*">
+                                <ContentControl Grid.Column="0" Classes="login-input-icon">
+                                  <lucide:Lucide Kind="Link" Width="15" Height="15" />
+                                </ContentControl>
+                                <TextBox Grid.Column="1" Tag="Url" Classes="login-input" Watermark="https://…" />
+                              </Grid>
+                            </Border>
+                          </StackPanel>
+
+                          <StackPanel Classes="login-field">
+                            <TextBlock Text="Mot de passe" Classes="login-label" />
+                            <Border Classes="login-input-container">
+                              <Grid ColumnDefinitions="Auto,*,Auto">
+                                <ContentControl Grid.Column="0" Classes="login-input-icon">
+                                  <lucide:Lucide Kind="Lock" Width="15" Height="15" />
+                                </ContentControl>
+                                <TextBox Grid.Column="1" Tag="Password" Classes="login-input" Watermark="Mot de passe…" PasswordChar="●" />
+                                <Button Grid.Column="2" Classes="login-eye-btn" Click="ToggleCardPasswordClick" Cursor="Hand">
+                                  <Panel>
+                                    <ContentControl Tag="eye-show" Classes="login-eye-icon">
+                                      <lucide:Lucide Kind="Eye" Width="15" Height="15" />
+                                    </ContentControl>
+                                    <ContentControl Tag="eye-hide" Classes="login-eye-icon" IsVisible="False">
+                                      <lucide:Lucide Kind="EyeClosed" Width="15" Height="15" />
+                                    </ContentControl>
+                                  </Panel>
+                                </Button>
+                              </Grid>
+                            </Border>
+                          </StackPanel>
+
+                          <StackPanel Classes="login-field">
+                            <TextBlock Text="Catégorie" Classes="login-label" />
+                            <ComboBox Tag="Category" Classes="form-combo" Cursor="Hand">
+                              <ComboBox.ItemTemplate>
+                                <DataTemplate x:DataType="modeles:DBProfileCategory">
+                                  <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                                    <Border Width="14" Height="14" CornerRadius="7" VerticalAlignment="Center"
+                                            Background="{Binding Color, Converter={StaticResource ColorBrushConverter}}" />
+                                    <TextBlock Text="{Binding Label}" Foreground="White" VerticalAlignment="Center" />
+                                  </StackPanel>
+                                </DataTemplate>
+                              </ComboBox.ItemTemplate>
+                            </ComboBox>
+                          </StackPanel>
+
+                          <Grid ColumnDefinitions="*,10,*" Margin="0,8,0,0">
+                            <Button Grid.Column="0" Classes="form-save-btn" Click="SaveProfileInlineClick" Cursor="Hand">
+                              <TextBlock Text="Enregistrer" Classes="login-submit-text" />
+                            </Button>
+                            <Button Grid.Column="2" Classes="cat-cancel-btn" Click="CancelProfileInlineClick" Margin="0" Cursor="Hand">
+                              <TextBlock Text="Annuler" Classes="login-submit-text" />
+                            </Button>
+                          </Grid>
+
+                          <Button Classes="delete-btn" Click="DeleteProfileInlineClick" Cursor="Hand" Margin="0,8,0,0">
+                            <TextBlock Text="Supprimer" Classes="login-submit-text" />
+                          </Button>
+
+                        </StackPanel>
                       </Border>
 
-                      <!-- Infos -->
-                      <StackPanel Grid.Column="1" Classes="account-info">
-                        <TextBlock Text="{Binding Name}" Classes="account-name" />
-                        <TextBlock Text="{Binding Category.Label}" Classes="account-category" />
-                        <TextBlock Text="{Binding Login}" Classes="account-login" />
-                      </StackPanel>
-
-                      <!-- Mot de passe -->
-                      <TextBlock Grid.Column="2" Text="••••••••••••" Classes="account-password" />
-
-                      <!-- Actions -->
-                      <StackPanel Grid.Column="3" Orientation="Horizontal" Classes="account-actions">
-                        <Button Classes="icon-btn" Tag="{Binding}" Click="ToggleProfilePasswordClick" Cursor="Hand">
-                          <Panel>
-                            <ContentControl Classes="account-action-icon">
-                              <lucide:Lucide Kind="Eye" Width="15" Height="15" />
-                            </ContentControl>
-                            <ContentControl Classes="account-action-icon" IsVisible="False">
-                              <lucide:Lucide Kind="EyeClosed" Width="15" Height="15" />
-                            </ContentControl>
-                          </Panel>
-                        </Button>
-                        <Button Classes="icon-btn" Tag="{Binding}" Click="CopyProfilePasswordClick" Cursor="Hand">
-                          <ContentControl Classes="account-action-icon">
-                            <lucide:Lucide Kind="Copy" Width="15" Height="15" />
-                          </ContentControl>
-                        </Button>
-                      </StackPanel>
-
-                    </Grid>
+                    </StackPanel>
                   </Border>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
+            <Border Classes="add-expand-card">
+              <StackPanel>
+                <Button x:Name="ProfileAddTrigger" Classes="add-expand-trigger" Click="ToggleProfileAddClick" Cursor="Hand">
+                  <StackPanel Orientation="Horizontal" Spacing="12">
+                    <ContentControl Classes="add-card-icon">
+                      <lucide:Lucide Kind="CirclePlus" Width="18" Height="18" />
+                    </ContentControl>
+                    <TextBlock Text="Ajouter un compte" Classes="add-card-text" />
+                  </StackPanel>
+                </Button>
+
+                <Border x:Name="ProfileAddForm" MaxHeight="0" ClipToBounds="True">
+                  <Border.Transitions>
+                    <Transitions>
+                      <DoubleTransition Property="MaxHeight" Duration="0:0:0.32" Easing="CubicEaseInOut" />
+                    </Transitions>
+                  </Border.Transitions>
+                  <StackPanel Margin="0,4,0,0">
+
+                    <StackPanel Classes="login-field">
+                      <TextBlock Text="Nom du service" Classes="login-label" />
+                      <Border Classes="login-input-container">
+                        <Grid ColumnDefinitions="Auto,*">
+                          <ContentControl Grid.Column="0" Classes="login-input-icon">
+                            <lucide:Lucide Kind="Globe" Width="15" Height="15" />
+                          </ContentControl>
+                          <TextBox Grid.Column="1" x:Name="ProfileNameInput" Classes="login-input" Watermark="Google, GitHub…" />
+                        </Grid>
+                      </Border>
+                    </StackPanel>
+
+                    <StackPanel Classes="login-field">
+                      <TextBlock Text="Identifiant" Classes="login-label" />
+                      <Border Classes="login-input-container">
+                        <Grid ColumnDefinitions="Auto,*">
+                          <ContentControl Grid.Column="0" Classes="login-input-icon">
+                            <lucide:Lucide Kind="User" Width="15" Height="15" />
+                          </ContentControl>
+                          <TextBox Grid.Column="1" x:Name="ProfileLoginInput" Classes="login-input" Watermark="Votre identifiant…" />
+                        </Grid>
+                      </Border>
+                    </StackPanel>
+
+                    <StackPanel Classes="login-field">
+                      <TextBlock Text="Email" Classes="login-label" />
+                      <Border Classes="login-input-container">
+                        <Grid ColumnDefinitions="Auto,*">
+                          <ContentControl Grid.Column="0" Classes="login-input-icon">
+                            <lucide:Lucide Kind="Mail" Width="15" Height="15" />
+                          </ContentControl>
+                          <TextBox Grid.Column="1" x:Name="ProfileEmailInput" Classes="login-input" Watermark="votre@email.com" />
+                        </Grid>
+                      </Border>
+                    </StackPanel>
+
+                    <StackPanel Classes="login-field">
+                      <TextBlock Text="URL du site" Classes="login-label" />
+                      <Border Classes="login-input-container">
+                        <Grid ColumnDefinitions="Auto,*">
+                          <ContentControl Grid.Column="0" Classes="login-input-icon">
+                            <lucide:Lucide Kind="Link" Width="15" Height="15" />
+                          </ContentControl>
+                          <TextBox Grid.Column="1" x:Name="ProfileUrlInput" Classes="login-input" Watermark="https://…" />
+                        </Grid>
+                      </Border>
+                    </StackPanel>
+
+                    <StackPanel Classes="login-field">
+                      <TextBlock Text="Mot de passe" Classes="login-label" />
+                      <Border Classes="login-input-container">
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                          <ContentControl Grid.Column="0" Classes="login-input-icon">
+                            <lucide:Lucide Kind="Lock" Width="15" Height="15" />
+                          </ContentControl>
+                          <TextBox Grid.Column="1" x:Name="ProfilePasswordInput" Classes="login-input" Watermark="Mot de passe…" PasswordChar="●" />
+                          <Button Grid.Column="2" Classes="login-eye-btn" Click="ToggleProfileFormPasswordClick" Cursor="Hand">
+                            <Panel>
+                              <ContentControl x:Name="ProfileFormEyeShow" Classes="login-eye-icon">
+                                <lucide:Lucide Kind="Eye" Width="15" Height="15" />
+                              </ContentControl>
+                              <ContentControl x:Name="ProfileFormEyeHide" Classes="login-eye-icon" IsVisible="False">
+                                <lucide:Lucide Kind="EyeClosed" Width="15" Height="15" />
+                              </ContentControl>
+                            </Panel>
+                          </Button>
+                        </Grid>
+                      </Border>
+                    </StackPanel>
+
+                    <StackPanel Classes="login-field">
+                      <TextBlock Text="Catégorie" Classes="login-label" />
+                      <ComboBox x:Name="ProfileCategoryComboBox" Classes="form-combo" Cursor="Hand">
+                        <ComboBox.ItemTemplate>
+                          <DataTemplate x:DataType="modeles:DBProfileCategory">
+                            <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                              <Border Width="14" Height="14" CornerRadius="7" VerticalAlignment="Center"
+                                      Background="{Binding Color, Converter={StaticResource ColorBrushConverter}}" />
+                              <TextBlock Text="{Binding Label}" Foreground="White" VerticalAlignment="Center" />
+                            </StackPanel>
+                          </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                      </ComboBox>
+                    </StackPanel>
+
+                    <Grid ColumnDefinitions="*,10,*" Margin="0,8,0,0">
+                      <Button Grid.Column="0" Classes="form-save-btn" Click="SaveProfileFormClick" Cursor="Hand">
+                        <TextBlock Text="Enregistrer" Classes="login-submit-text" />
+                      </Button>
+                      <Button Grid.Column="2" x:Name="ProfileCancelBtn" Classes="cat-cancel-btn" Click="CloseProfileAddClick" Margin="0" Cursor="Hand">
+                        <TextBlock Text="Annuler" Classes="login-submit-text" />
+                      </Button>
+                    </Grid>
+
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+            </Border>
+            </StackPanel>
           </ScrollViewer>
 
         </Grid>
@@ -126,52 +354,129 @@
         <!-- ══ Vue catégories ══ -->
         <Grid x:Name="CategoryView" IsVisible="False" RowDefinitions="Auto,*" Classes="main-content">
 
-          <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto,Auto" Classes="section-header">
+          <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Classes="section-header">
             <Button Grid.Column="0" Classes="icon-btn" Click="BackClick" Margin="0,0,12,0" Cursor="Hand">
               <ContentControl Classes="footer-icon">
                 <lucide:Lucide Kind="ArrowLeft" Width="18" Height="18" />
               </ContentControl>
             </Button>
             <TextBlock Grid.Column="1" Text="Catégories" Classes="section-title" />
-            <Border Grid.Column="2" Classes="count-badge" Margin="0,0,10,0">
+            <Border Grid.Column="2" Classes="count-badge" Margin="0,0,0,0">
               <TextBlock x:Name="CategoryCountText" Text="0 catégorie" Classes="count-text" />
             </Border>
-            <Button Grid.Column="3" Classes="add-btn" Click="AddCategoryClick" Cursor="Hand">
-              <ContentControl Classes="add-icon">
-                <lucide:Lucide Kind="CirclePlus" Width="22" Height="22" />
-              </ContentControl>
-            </Button>
           </Grid>
 
           <ScrollViewer Grid.Row="1">
+            <StackPanel>
             <ItemsControl x:Name="CategoryItemsControl">
               <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="modeles:DBProfileCategory">
-                  <Border Classes="account-card">
-                    <Grid ColumnDefinitions="Auto,*,Auto">
-                      <Border Grid.Column="0" Width="36" Height="36" CornerRadius="18"
-                              VerticalAlignment="Center"
-                              Background="{Binding Color, Converter={StaticResource ColorBrushConverter}}" />
-                      <TextBlock Grid.Column="1" Text="{Binding Label}"
-                                 Classes="account-name" Margin="14,0,0,0" VerticalAlignment="Center" />
-                      <StackPanel Grid.Column="2" Orientation="Horizontal"
-                                  VerticalAlignment="Center" Classes="account-actions">
-                        <Button Classes="icon-btn" Tag="{Binding}" Click="EditCategoryClick" Cursor="Hand">
-                          <ContentControl Classes="account-action-icon">
-                            <lucide:Lucide Kind="Pencil" Width="15" Height="15" />
-                          </ContentControl>
-                        </Button>
-                        <Button Classes="icon-btn" Tag="{Binding}" Click="DeleteCategoryClick" Cursor="Hand">
-                          <ContentControl Classes="account-action-icon">
-                            <lucide:Lucide Kind="Trash2" Width="15" Height="15" />
-                          </ContentControl>
-                        </Button>
-                      </StackPanel>
-                    </Grid>
+                  <Border Classes="account-card" Tag="{Binding}" PointerPressed="CategoryCardPointerPressed" Cursor="Hand">
+                    <StackPanel>
+                      <Grid ColumnDefinitions="Auto,*">
+                        <Border Grid.Column="0" Width="36" Height="36" CornerRadius="18"
+                                VerticalAlignment="Center"
+                                Background="{Binding Color, Converter={StaticResource ColorBrushConverter}}" />
+                        <TextBlock Grid.Column="1" Text="{Binding Label}"
+                                   Classes="account-name" Margin="14,0,0,0" VerticalAlignment="Center" />
+                      </Grid>
+
+                      <!-- Formulaire d'édition inline de catégorie -->
+                      <Border Tag="cat-edit-form" MaxHeight="0" ClipToBounds="True">
+                        <Border.Transitions>
+                          <Transitions>
+                            <DoubleTransition Property="MaxHeight" Duration="0:0:0.32" Easing="CubicEaseInOut" />
+                          </Transitions>
+                        </Border.Transitions>
+                        <StackPanel Margin="0,12,0,0">
+
+                          <StackPanel Classes="login-field">
+                            <TextBlock Text="Nom" Classes="login-label" />
+                            <Border Classes="login-input-container">
+                              <Grid ColumnDefinitions="Auto,*">
+                                <ContentControl Grid.Column="0" Classes="login-input-icon">
+                                  <lucide:Lucide Kind="Tag" Width="15" Height="15" />
+                                </ContentControl>
+                                <TextBox Grid.Column="1" Tag="CatLabel" Classes="login-input" Watermark="Personnel, Travail…" />
+                              </Grid>
+                            </Border>
+                          </StackPanel>
+
+                          <StackPanel Spacing="10" Margin="0,0,0,14">
+                            <TextBlock Text="Couleur" Classes="login-label" />
+                            <WrapPanel Tag="cat-color-swatches" HorizontalAlignment="Left" />
+                          </StackPanel>
+
+                          <Grid ColumnDefinitions="*,10,*" Margin="0,8,0,0">
+                            <Button Grid.Column="0" Classes="form-save-btn" Click="SaveCategoryInlineClick" Cursor="Hand">
+                              <TextBlock Text="Enregistrer" Classes="login-submit-text" />
+                            </Button>
+                            <Button Grid.Column="2" Classes="cat-cancel-btn" Click="CancelCategoryInlineClick" Margin="0" Cursor="Hand">
+                              <TextBlock Text="Annuler" Classes="login-submit-text" />
+                            </Button>
+                          </Grid>
+
+                          <Button Classes="delete-btn" Click="DeleteCategoryInlineClick" Cursor="Hand" Margin="0,8,0,0">
+                            <TextBlock Text="Supprimer" Classes="login-submit-text" />
+                          </Button>
+
+                        </StackPanel>
+                      </Border>
+                    </StackPanel>
                   </Border>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
+            <Border Classes="add-expand-card">
+              <StackPanel>
+                <Button x:Name="CategoryAddTrigger" Classes="add-expand-trigger" Click="ToggleCategoryAddClick" Cursor="Hand">
+                  <StackPanel Orientation="Horizontal" Spacing="12">
+                    <ContentControl Classes="add-card-icon">
+                      <lucide:Lucide Kind="CirclePlus" Width="18" Height="18" />
+                    </ContentControl>
+                    <TextBlock Text="Ajouter une catégorie" Classes="add-card-text" />
+                  </StackPanel>
+                </Button>
+
+                <Border x:Name="CategoryAddForm" MaxHeight="0" ClipToBounds="True">
+                  <Border.Transitions>
+                    <Transitions>
+                      <DoubleTransition Property="MaxHeight" Duration="0:0:0.32" Easing="CubicEaseInOut" />
+                    </Transitions>
+                  </Border.Transitions>
+                  <StackPanel Margin="0,4,0,0">
+
+                    <StackPanel Classes="login-field">
+                      <TextBlock Text="Nom" Classes="login-label" />
+                      <Border Classes="login-input-container">
+                        <Grid ColumnDefinitions="Auto,*">
+                          <ContentControl Grid.Column="0" Classes="login-input-icon">
+                            <lucide:Lucide Kind="Tag" Width="15" Height="15" />
+                          </ContentControl>
+                          <TextBox Grid.Column="1" x:Name="NewCategoryLabelInput" Classes="login-input" Watermark="Personnel, Travail…" />
+                        </Grid>
+                      </Border>
+                    </StackPanel>
+
+                    <StackPanel Spacing="10" Margin="0,0,0,14">
+                      <TextBlock Text="Couleur" Classes="login-label" />
+                      <WrapPanel x:Name="NewCategoryColorSwatches" HorizontalAlignment="Left" />
+                    </StackPanel>
+
+                    <Grid ColumnDefinitions="*,10,*">
+                      <Button Grid.Column="0" Classes="form-save-btn" Click="SaveCategoryFormClick" Cursor="Hand">
+                        <TextBlock Text="Enregistrer" Classes="login-submit-text" />
+                      </Button>
+                      <Button Grid.Column="2" x:Name="CategoryCancelBtn" Classes="cat-cancel-btn" Click="CloseNewCategoryClick" Margin="0" Cursor="Hand">
+                        <TextBlock Text="Annuler" Classes="login-submit-text" />
+                      </Button>
+                    </Grid>
+
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+            </Border>
+            </StackPanel>
           </ScrollViewer>
 
         </Grid>
@@ -244,50 +549,6 @@
           <Border Classes="settings-row">
             <Grid ColumnDefinitions="*,Auto">
               <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Option A" Classes="settings-row-title" />
-                <TextBlock Text="Description de l'option A" Classes="settings-row-desc" />
-              </StackPanel>
-              <ToggleSwitch Grid.Column="1" IsChecked="True" VerticalAlignment="Center" Classes="settings-toggle" Cursor="Hand" />
-            </Grid>
-          </Border>
-
-          <Border Classes="settings-row">
-            <Grid ColumnDefinitions="*,Auto">
-              <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Option B" Classes="settings-row-title" />
-                <TextBlock Text="Description de l'option B" Classes="settings-row-desc" />
-              </StackPanel>
-              <ToggleSwitch Grid.Column="1" IsChecked="False" VerticalAlignment="Center" Classes="settings-toggle" />
-            </Grid>
-          </Border>
-
-          <Border Classes="settings-row">
-            <Grid ColumnDefinitions="*,Auto">
-              <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Option C" Classes="settings-row-title" />
-                <TextBlock Text="Description de l'option C" Classes="settings-row-desc" />
-              </StackPanel>
-              <ToggleSwitch Grid.Column="1" IsChecked="False" VerticalAlignment="Center" Classes="settings-toggle" />
-            </Grid>
-          </Border>
-
-          <Border Classes="settings-row">
-            <Grid ColumnDefinitions="*,Auto">
-              <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Option D" Classes="settings-row-title" />
-                <TextBlock Text="Description de l'option D" Classes="settings-row-desc" />
-              </StackPanel>
-              <ComboBox Grid.Column="1" SelectedIndex="0" VerticalAlignment="Center" Classes="settings-combo" Cursor="Hand">
-                <ComboBoxItem>Valeur 1</ComboBoxItem>
-                <ComboBoxItem>Valeur 2</ComboBoxItem>
-                <ComboBoxItem>Valeur 3</ComboBoxItem>
-              </ComboBox>
-            </Grid>
-          </Border>
-
-          <Border Classes="settings-row">
-            <Grid ColumnDefinitions="*,Auto">
-              <StackPanel VerticalAlignment="Center">
                 <TextBlock Text="Catégories" Classes="settings-row-title" />
                 <TextBlock Text="Gérer les catégories de vos comptes" Classes="settings-row-desc" />
               </StackPanel>
@@ -315,177 +576,20 @@
             </Grid>
           </Border>
 
-        </StackPanel>
-      </Border>
-    </Panel>
-
-    <!-- Formulaire profil -->
-    <Panel x:Name="ProfileFormOverlay" IsVisible="False">
-      <Border Classes="overlay-backdrop" />
-      <Border Classes="overlay-card" VerticalAlignment="Center" HorizontalAlignment="Center">
-        <StackPanel Classes="overlay-content">
-
-          <Grid ColumnDefinitions="*,Auto">
-            <TextBlock Text="Nouveau profil" Classes="overlay-title" VerticalAlignment="Center" />
-            <Button Grid.Column="1" Classes="icon-btn" Click="CloseProfileFormClick" Cursor="Hand">
-              <ContentControl Classes="overlay-close-icon">
-                <lucide:Lucide Kind="X" Width="16" Height="16" />
-              </ContentControl>
-            </Button>
-          </Grid>
-
-          <!-- Nom du service -->
-          <StackPanel Classes="login-field">
-            <TextBlock Text="Nom du service" Classes="login-label" />
-            <Border Classes="login-input-container">
-              <Grid ColumnDefinitions="Auto,*">
-                <ContentControl Grid.Column="0" Classes="login-input-icon">
-                  <lucide:Lucide Kind="Globe" Width="15" Height="15" />
-                </ContentControl>
-                <TextBox Grid.Column="1" x:Name="ProfileNameInput"
-                         Classes="login-input" Watermark="Google, GitHub…" />
-              </Grid>
-            </Border>
-          </StackPanel>
-
-          <!-- Identifiant -->
-          <StackPanel Classes="login-field">
-            <TextBlock Text="Identifiant" Classes="login-label" />
-            <Border Classes="login-input-container">
-              <Grid ColumnDefinitions="Auto,*">
-                <ContentControl Grid.Column="0" Classes="login-input-icon">
-                  <lucide:Lucide Kind="User" Width="15" Height="15" />
-                </ContentControl>
-                <TextBox Grid.Column="1" x:Name="ProfileLoginInput"
-                         Classes="login-input" Watermark="Votre identifiant…" />
-              </Grid>
-            </Border>
-          </StackPanel>
-
-          <!-- Email -->
-          <StackPanel Classes="login-field">
-            <TextBlock Text="Email" Classes="login-label" />
-            <Border Classes="login-input-container">
-              <Grid ColumnDefinitions="Auto,*">
-                <ContentControl Grid.Column="0" Classes="login-input-icon">
-                  <lucide:Lucide Kind="Mail" Width="15" Height="15" />
-                </ContentControl>
-                <TextBox Grid.Column="1" x:Name="ProfileEmailInput"
-                         Classes="login-input" Watermark="votre@email.com" />
-              </Grid>
-            </Border>
-          </StackPanel>
-
-          <!-- URL -->
-          <StackPanel Classes="login-field">
-            <TextBlock Text="URL du site" Classes="login-label" />
-            <Border Classes="login-input-container">
-              <Grid ColumnDefinitions="Auto,*">
-                <ContentControl Grid.Column="0" Classes="login-input-icon">
-                  <lucide:Lucide Kind="Link" Width="15" Height="15" />
-                </ContentControl>
-                <TextBox Grid.Column="1" x:Name="ProfileUrlInput"
-                         Classes="login-input" Watermark="https://…" />
-              </Grid>
-            </Border>
-          </StackPanel>
-
-          <!-- Mot de passe -->
-          <StackPanel Classes="login-field">
-            <TextBlock Text="Mot de passe" Classes="login-label" />
-            <Border Classes="login-input-container">
-              <Grid ColumnDefinitions="Auto,*,Auto">
-                <ContentControl Grid.Column="0" Classes="login-input-icon">
-                  <lucide:Lucide Kind="Lock" Width="15" Height="15" />
-                </ContentControl>
-                <TextBox Grid.Column="1" x:Name="ProfilePasswordInput"
-                         Classes="login-input" Watermark="Mot de passe…" PasswordChar="●" />
-                <Button Grid.Column="2" Classes="login-eye-btn" Click="ToggleProfileFormPasswordClick" Cursor="Hand">
-                  <Panel>
-                    <ContentControl x:Name="ProfileFormEyeShow" Classes="login-eye-icon">
-                      <lucide:Lucide Kind="Eye" Width="15" Height="15" />
-                    </ContentControl>
-                    <ContentControl x:Name="ProfileFormEyeHide" Classes="login-eye-icon" IsVisible="False">
-                      <lucide:Lucide Kind="EyeClosed" Width="15" Height="15" />
-                    </ContentControl>
-                  </Panel>
-                </Button>
-              </Grid>
-            </Border>
-          </StackPanel>
-
-          <!-- Catégorie -->
-          <StackPanel Classes="login-field">
-            <TextBlock Text="Catégorie" Classes="login-label" />
-            <ComboBox x:Name="ProfileCategoryComboBox" Classes="form-combo" Cursor="Hand">
-              <ComboBox.ItemTemplate>
-                <DataTemplate x:DataType="modeles:DBProfileCategory">
-                  <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <Border Width="14" Height="14" CornerRadius="7" VerticalAlignment="Center"
-                            Background="{Binding Color, Converter={StaticResource ColorBrushConverter}}" />
-                    <TextBlock Text="{Binding Label}" Foreground="White" VerticalAlignment="Center" />
-                  </StackPanel>
-                </DataTemplate>
-              </ComboBox.ItemTemplate>
-            </ComboBox>
-          </StackPanel>
-
-          <Grid ColumnDefinitions="*,10,*" Margin="0,4,0,0">
-            <Button Grid.Column="0" Classes="cat-cancel-btn" Click="CloseProfileFormClick" Cursor="Hand">
-              <TextBlock Text="Annuler" Classes="login-submit-text" />
-            </Button>
-            <Button Grid.Column="2" Classes="login-submit-btn" Click="SaveProfileClick" Margin="0" Cursor="Hand">
-              <TextBlock Text="Enregistrer" Classes="login-submit-text" />
-            </Button>
-          </Grid>
-
-        </StackPanel>
-      </Border>
-    </Panel>
-
-    <!-- Formulaire catégorie -->
-    <Panel x:Name="CategoryFormOverlay" IsVisible="False">
-      <Border Classes="overlay-backdrop" />
-      <Border Classes="overlay-card" Width="440"
-              VerticalAlignment="Center" HorizontalAlignment="Center">
-        <StackPanel Classes="overlay-content">
-
-          <Grid ColumnDefinitions="*,Auto">
-            <TextBlock x:Name="CategoryFormTitle" Text="Nouvelle catégorie"
-                       Classes="overlay-title" VerticalAlignment="Center" />
-            <Button Grid.Column="1" Classes="icon-btn" Click="CloseCategoryFormClick" Cursor="Hand">
-              <ContentControl Classes="overlay-close-icon">
-                <lucide:Lucide Kind="X" Width="16" Height="16" />
-              </ContentControl>
-            </Button>
-          </Grid>
-
-          <StackPanel Classes="login-field">
-            <TextBlock Text="Nom" Classes="login-label" />
-            <Border Classes="login-input-container">
-              <Grid ColumnDefinitions="Auto,*">
-                <ContentControl Grid.Column="0" Classes="login-input-icon">
-                  <lucide:Lucide Kind="Tag" Width="15" Height="15" />
-                </ContentControl>
-                <TextBox Grid.Column="1" x:Name="CategoryLabelInput"
-                         Classes="login-input" Watermark="Personnel, Travail…" />
-              </Grid>
-            </Border>
-          </StackPanel>
-
-          <StackPanel Spacing="10">
-            <TextBlock Text="Couleur" Classes="login-label" />
-            <WrapPanel x:Name="CategoryColorSwatches" HorizontalAlignment="Left" />
-          </StackPanel>
-
-          <Grid ColumnDefinitions="*,10,*" Margin="0,4,0,0">
-            <Button Grid.Column="0" Classes="cat-cancel-btn" Click="CloseCategoryFormClick" Cursor="Hand">
-              <TextBlock Text="Annuler" Classes="login-submit-text" />
-            </Button>
-            <Button Grid.Column="2" Classes="login-submit-btn" Click="SaveCategoryClick" Margin="0" Cursor="Hand">
-              <TextBlock Text="Enregistrer" Classes="login-submit-text" />
-            </Button>
-          </Grid>
+          <Border Classes="settings-row">
+            <Grid ColumnDefinitions="*,Auto">
+              <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Déconnexion" Classes="settings-row-title" />
+                <TextBlock Text="Revenir à l'écran de connexion" Classes="settings-row-desc" />
+              </StackPanel>
+              <Button Grid.Column="1" Classes="icon-btn" Click="LogoutClick" VerticalAlignment="Center" Cursor="Hand">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <lucide:Lucide Kind="LogOut" Width="15" Height="15" />
+                  <TextBlock Text="Se déconnecter" Classes="settings-row-title" VerticalAlignment="Center" />
+                </StackPanel>
+              </Button>
+            </Grid>
+          </Border>
 
         </StackPanel>
       </Border>

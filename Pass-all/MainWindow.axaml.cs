@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Avalonia.VisualTree;
 using Microsoft.EntityFrameworkCore;
 using Passall.Modeles;
 using Passall.Utils;
@@ -17,8 +19,12 @@ namespace Passall
         public Guid CurrentUserId { get; set; }
 
         private bool _profilePasswordVisible;
-        private Guid? _editingCategoryId;
-        private string _selectedColor = "#CC4285F4";
+        private bool _profileAddOpen;
+        private Guid? _profileEditId;
+
+        private bool _categoryAddOpen;
+        private Guid? _categoryEditId;
+        private string _selectedCategoryColor = "#CC4285F4";
 
         private static readonly string[] PresetColors =
         {
@@ -29,8 +35,8 @@ namespace Passall
         public MainWindow()
         {
             InitializeComponent();
-            BuildColorSwatches();
-            _ = LoadProfiles();
+            BuildColorSwatches(NewCategoryColorSwatches, SelectCategoryColor);
+            this.Loaded += (s, e) => _ = LoadProfiles();
         }
 
         // ── Profils — liste ────────────────────────────────────────────────────
@@ -40,7 +46,7 @@ namespace Passall
             await using var db = new DataContext();
             var profiles = await db.UserProfile
                 .Include(p => p.Category)
-                .Where(p => CurrentUserId == Guid.Empty || p.UserId == CurrentUserId)
+                .Where(p => p.UserId == CurrentUserId)
                 .OrderBy(p => p.Name)
                 .ToListAsync();
 
@@ -63,16 +69,16 @@ namespace Passall
 
             bool isHidden = pwdBlock.Text == "••••••••••••";
             pwdBlock.Text = isHidden
-                ? Passall.Utils.Utils.Decrypt(profile.Password) ?? "—"
+                ? Utils.Utils.Decrypt(profile.Password) ?? "—"
                 : "••••••••••••";
 
-            if (btn.Content is Panel panel)
+            if (btn.Content is Avalonia.Controls.Panel panel)
             {
                 var icons = panel.Children.OfType<ContentControl>().ToList();
                 if (icons.Count >= 2)
                 {
-                    icons[0].IsVisible = !isHidden;  // Eye : visible quand caché
-                    icons[1].IsVisible = isHidden;   // EyeClosed : visible quand affiché
+                    icons[0].IsVisible = !isHidden;
+                    icons[1].IsVisible = isHidden;
                 }
             }
         }
@@ -80,19 +86,81 @@ namespace Passall
         private async void CopyProfilePasswordClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             if (((Button)sender!).Tag is not DBUserProfile profile) return;
-            var decrypted = Passall.Utils.Utils.Decrypt(profile.Password) ?? string.Empty;
+            var decrypted = Utils.Utils.Decrypt(profile.Password) ?? string.Empty;
             var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
             if (clipboard != null)
                 await clipboard.SetTextAsync(decrypted);
         }
 
-        // ── Profils — formulaire ───────────────────────────────────────────────
+        // ── Profils — formulaire inline ────────────────────────────────────────
 
-        private async void AddProfileClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private Border? _openProfileCard;
+
+        private void ProfileCardPointerPressed(object? sender, PointerPressedEventArgs e)
         {
-            await using var db = new DataContext();
-            var categories = await db.ProfileCategory.OrderBy(c => c.Label).ToListAsync();
+            if (IsInsideButton(e.Source as Avalonia.Visual)) return;
+            if (sender is not Border border || border.Tag is not DBUserProfile profile) return;
+            _ = OpenProfileInlineEdit(border, profile);
+        }
 
+        private async Task OpenProfileInlineEdit(Border card, DBUserProfile profile)
+        {
+            // Close any previously open inline card
+            CloseProfileInlineCard();
+
+            var editForm = FindChildByTag<Border>(card, "edit-form");
+            if (editForm == null) return;
+
+            _openProfileCard = card;
+            _profileEditId = profile.Id;
+
+            // Fill the inline form fields
+            SetTextBoxByTag(card, "Name", profile.Name);
+            SetTextBoxByTag(card, "Login", profile.Login);
+            SetTextBoxByTag(card, "Email", profile.Email);
+            SetTextBoxByTag(card, "Url", profile.Url);
+            SetTextBoxByTag(card, "Password", Utils.Utils.Decrypt(profile.Password) ?? string.Empty);
+
+            // Reset password to hidden
+            var pwdBox = FindTextBoxByTag(card, "Password");
+            if (pwdBox != null) pwdBox.PasswordChar = '●';
+            var eyeShow = FindChildByTag<ContentControl>(card, "eye-show");
+            var eyeHide = FindChildByTag<ContentControl>(card, "eye-hide");
+            if (eyeShow != null) eyeShow.IsVisible = true;
+            if (eyeHide != null) eyeHide.IsVisible = false;
+
+            // Load category combo
+            var categoryCombo = FindChildByTag<ComboBox>(card, "Category");
+            if (categoryCombo != null)
+            {
+                await using var db = new DataContext();
+                var categories = await db.ProfileCategory.Where(c => c.UserId == CurrentUserId).OrderBy(c => c.Label).ToListAsync();
+                categoryCombo.ItemsSource = categories;
+                categoryCombo.SelectedItem = categories.FirstOrDefault(c => c.Id == profile.CategoryId);
+            }
+
+            editForm.MaxHeight = 700;
+        }
+
+        private void CloseProfileInlineCard()
+        {
+            if (_openProfileCard != null)
+            {
+                var editForm = FindChildByTag<Border>(_openProfileCard, "edit-form");
+                if (editForm != null) editForm.MaxHeight = 0;
+                _openProfileCard = null;
+                _profileEditId = null;
+            }
+        }
+
+        private async void ToggleProfileAddClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if (_profileAddOpen) { CloseProfileForm(); return; }
+
+            _profileEditId = null;
+
+            await using var db = new DataContext();
+            var categories = await db.ProfileCategory.Where(c => c.UserId == CurrentUserId).OrderBy(c => c.Label).ToListAsync();
             ProfileCategoryComboBox.ItemsSource = categories;
             ProfileCategoryComboBox.SelectedIndex = categories.Count > 0 ? 0 : -1;
 
@@ -106,10 +174,14 @@ namespace Passall
             ProfileFormEyeShow.IsVisible = true;
             ProfileFormEyeHide.IsVisible = false;
 
-            ProfileFormOverlay.IsVisible = true;
+            ProfileAddTrigger.IsVisible = false;
+            ProfileCancelBtn.IsVisible = true;
+
+            ProfileAddForm.MaxHeight = 700;
+            _profileAddOpen = true;
         }
 
-        private async void SaveProfileClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private async void SaveProfileFormClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             var name = ProfileNameInput.Text?.Trim();
             if (string.IsNullOrEmpty(name)) return;
@@ -126,7 +198,6 @@ namespace Passall
                 if (user == null) return;
                 userId = user.Id;
             }
-
             db.UserProfile.Add(new DBUserProfile
             {
                 Id = Guid.NewGuid(),
@@ -134,18 +205,100 @@ namespace Passall
                 Login = ProfileLoginInput.Text?.Trim() ?? string.Empty,
                 Email = ProfileEmailInput.Text?.Trim() ?? string.Empty,
                 Url = ProfileUrlInput.Text?.Trim() ?? string.Empty,
-                Password = Passall.Utils.Utils.Encrypt(ProfilePasswordInput.Text) ?? string.Empty,
+                Password = Utils.Utils.Encrypt(ProfilePasswordInput.Text) ?? string.Empty,
                 UserId = userId,
                 CategoryId = category.Id,
             });
             await db.SaveChangesAsync();
 
-            ProfileFormOverlay.IsVisible = false;
+            CloseProfileForm();
             await LoadProfiles();
         }
 
-        private void CloseProfileFormClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-            => ProfileFormOverlay.IsVisible = false;
+        // ── Inline card edit: Save / Cancel / Delete ─────────────────────────
+
+        private async void SaveProfileInlineClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if (_openProfileCard == null || !_profileEditId.HasValue) return;
+
+            var name = FindTextBoxByTag(_openProfileCard, "Name")?.Text?.Trim();
+            if (string.IsNullOrEmpty(name)) return;
+
+            var categoryCombo = FindChildByTag<ComboBox>(_openProfileCard, "Category");
+            var category = categoryCombo?.SelectedItem as DBProfileCategory;
+            if (category == null) return;
+
+            await using var db = new DataContext();
+            var entity = await db.UserProfile.FindAsync(_profileEditId.Value);
+            if (entity != null)
+            {
+                entity.Name = name;
+                entity.Login = FindTextBoxByTag(_openProfileCard, "Login")?.Text?.Trim() ?? string.Empty;
+                entity.Email = FindTextBoxByTag(_openProfileCard, "Email")?.Text?.Trim() ?? string.Empty;
+                entity.Url = FindTextBoxByTag(_openProfileCard, "Url")?.Text?.Trim() ?? string.Empty;
+                var pwd = FindTextBoxByTag(_openProfileCard, "Password")?.Text;
+                if (!string.IsNullOrEmpty(pwd))
+                    entity.Password = Utils.Utils.Encrypt(pwd) ?? entity.Password;
+                entity.CategoryId = category.Id;
+                await db.SaveChangesAsync();
+            }
+
+            CloseProfileInlineCard();
+            await LoadProfiles();
+        }
+
+        private void CancelProfileInlineClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            CloseProfileInlineCard();
+        }
+
+        private async void DeleteProfileInlineClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if (!_profileEditId.HasValue) return;
+
+            await using var db = new DataContext();
+            var entity = await db.UserProfile.FindAsync(_profileEditId.Value);
+            if (entity != null)
+            {
+                db.UserProfile.Remove(entity);
+                await db.SaveChangesAsync();
+            }
+
+            CloseProfileInlineCard();
+            await LoadProfiles();
+        }
+
+        private void ToggleCardPasswordClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if (sender is not Button btn) return;
+            // Walk up to find the card
+            var card = btn.FindAncestorOfType<Border>();
+            while (card != null && card.Tag is not DBUserProfile)
+                card = card.FindAncestorOfType<Border>();
+            if (card == null) return;
+
+            var pwdBox = FindTextBoxByTag(card, "Password");
+            if (pwdBox == null) return;
+
+            bool isHidden = pwdBox.PasswordChar == '●';
+            pwdBox.PasswordChar = isHidden ? '\0' : '●';
+
+            var eyeShow = FindChildByTag<ContentControl>(card, "eye-show");
+            var eyeHide = FindChildByTag<ContentControl>(card, "eye-hide");
+            if (eyeShow != null) eyeShow.IsVisible = !isHidden;
+            if (eyeHide != null) eyeHide.IsVisible = isHidden;
+        }
+
+        private void CloseProfileAddClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+            => CloseProfileForm();
+
+        private void CloseProfileForm()
+        {
+            ProfileAddForm.MaxHeight = 0;
+            _profileAddOpen = false;
+            ProfileAddTrigger.IsVisible = true;
+            ProfileCancelBtn.IsVisible = true;
+        }
 
         private void ToggleProfileFormPasswordClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
@@ -167,6 +320,7 @@ namespace Passall
 
         private void BackClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
+            CloseCategoryForm();
             CategoryView.IsVisible = false;
             MainView.IsVisible = true;
         }
@@ -185,92 +339,184 @@ namespace Passall
         private void CloseSettingsClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
             => SettingsOverlay.IsVisible = false;
 
+        private void LogoutClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            new AuthWindow().Show();
+            this.Close();
+        }
+
         // ── Catégories — liste ─────────────────────────────────────────────────
 
         private async Task LoadCategories()
         {
             await using var db = new DataContext();
-            var categories = await db.ProfileCategory.OrderBy(c => c.Label).ToListAsync();
+            var categories = await db.ProfileCategory.Where(c => c.UserId == CurrentUserId).OrderBy(c => c.Label).ToListAsync();
 
             CategoryItemsControl.ItemsSource = categories;
-
             var count = categories.Count;
             CategoryCountText.Text = count == 1 ? "1 catégorie" : $"{count} catégories";
         }
 
-        private void EditCategoryClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        // ── Catégories — formulaire inline ─────────────────────────────────────
+
+        private Border? _openCategoryCard;
+
+        private void CategoryCardPointerPressed(object? sender, PointerPressedEventArgs e)
         {
-            if (((Button)sender!).Tag is not DBProfileCategory cat) return;
-            _editingCategoryId = cat.Id;
-            CategoryFormTitle.Text = "Modifier la catégorie";
-            CategoryLabelInput.Text = cat.Label;
-            SelectColor(cat.Color);
-            CategoryFormOverlay.IsVisible = true;
+            if (IsInsideButton(e.Source as Avalonia.Visual)) return;
+            if (sender is not Border border || border.Tag is not DBProfileCategory cat) return;
+            OpenCategoryInlineEdit(border, cat);
         }
 
-        private async void DeleteCategoryClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void OpenCategoryInlineEdit(Border card, DBProfileCategory cat)
         {
-            if (((Button)sender!).Tag is not DBProfileCategory cat) return;
+            CloseCategoryInlineCard();
+
+            var editForm = FindChildByTag<Border>(card, "cat-edit-form");
+            if (editForm == null) return;
+
+            _openCategoryCard = card;
+            _categoryEditId = cat.Id;
+
+            SetTextBoxByTag(card, "CatLabel", cat.Label);
+
+            // Select color in inline swatches
+            var swatchPanel = FindChildByTag<WrapPanel>(card, "cat-color-swatches");
+            if (swatchPanel != null)
+            {
+                if (swatchPanel.Children.Count == 0)
+                {
+                    BuildColorSwatches(swatchPanel, c =>
+                    {
+                        _selectedCategoryColor = c;
+                        foreach (var child in swatchPanel.Children.OfType<Border>())
+                        {
+                            var isSelected = child.Tag is string tag && tag == c;
+                            child.BorderThickness = new Avalonia.Thickness(isSelected ? 2.5 : 0);
+                            child.BorderBrush = isSelected ? Brushes.White : null;
+                        }
+                    });
+                }
+
+                _selectedCategoryColor = cat.Color;
+                foreach (var child in swatchPanel.Children.OfType<Border>())
+                {
+                    var isSelected = child.Tag is string tag && tag == cat.Color;
+                    child.BorderThickness = new Avalonia.Thickness(isSelected ? 2.5 : 0);
+                    child.BorderBrush = isSelected ? Brushes.White : null;
+                }
+            }
+
+            editForm.MaxHeight = 400;
+        }
+
+        private void CloseCategoryInlineCard()
+        {
+            if (_openCategoryCard != null)
+            {
+                var editForm = FindChildByTag<Border>(_openCategoryCard, "cat-edit-form");
+                if (editForm != null) editForm.MaxHeight = 0;
+                _openCategoryCard = null;
+                _categoryEditId = null;
+            }
+        }
+
+        private void ToggleCategoryAddClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if (_categoryAddOpen) { CloseCategoryForm(); return; }
+
+            NewCategoryLabelInput.Text = string.Empty;
+            SelectCategoryColor(PresetColors[0]);
+
+            CategoryAddTrigger.IsVisible = false;
+            CategoryCancelBtn.IsVisible = true;
+
+            CategoryAddForm.MaxHeight = 400;
+            _categoryAddOpen = true;
+        }
+
+        private async void SaveCategoryFormClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            var label = NewCategoryLabelInput.Text?.Trim();
+            if (string.IsNullOrEmpty(label)) return;
 
             await using var db = new DataContext();
-            var entity = await db.ProfileCategory.FindAsync(cat.Id);
+            var userId = CurrentUserId;
+            if (userId == Guid.Empty)
+            {
+                var user = await db.User.FirstOrDefaultAsync();
+                if (user == null) return;
+                userId = user.Id;
+            }
+
+            db.ProfileCategory.Add(new DBProfileCategory
+            {
+                Id = Guid.NewGuid(),
+                Label = label,
+                Color = _selectedCategoryColor,
+                UserId = userId
+            });
+            await db.SaveChangesAsync();
+
+            CloseCategoryForm();
+            await LoadCategories();
+        }
+
+        private async void SaveCategoryInlineClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if (_openCategoryCard == null || !_categoryEditId.HasValue) return;
+
+            var label = FindTextBoxByTag(_openCategoryCard, "CatLabel")?.Text?.Trim();
+            if (string.IsNullOrEmpty(label)) return;
+
+            await using var db = new DataContext();
+            var entity = await db.ProfileCategory.FindAsync(_categoryEditId.Value);
+            if (entity != null)
+            {
+                entity.Label = label;
+                entity.Color = _selectedCategoryColor;
+                await db.SaveChangesAsync();
+            }
+
+            CloseCategoryInlineCard();
+            await LoadCategories();
+        }
+
+        private void CancelCategoryInlineClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            CloseCategoryInlineCard();
+        }
+
+        private async void DeleteCategoryInlineClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if (!_categoryEditId.HasValue) return;
+
+            await using var db = new DataContext();
+            var entity = await db.ProfileCategory.FindAsync(_categoryEditId.Value);
             if (entity != null)
             {
                 db.ProfileCategory.Remove(entity);
                 await db.SaveChangesAsync();
             }
+
+            CloseCategoryInlineCard();
             await LoadCategories();
         }
 
-        // ── Catégories — formulaire ────────────────────────────────────────────
+        private void CloseNewCategoryClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+            => CloseCategoryForm();
 
-        private void AddCategoryClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void CloseCategoryForm()
         {
-            _editingCategoryId = null;
-            CategoryFormTitle.Text = "Nouvelle catégorie";
-            CategoryLabelInput.Text = string.Empty;
-            SelectColor(PresetColors[0]);
-            CategoryFormOverlay.IsVisible = true;
+            CategoryAddForm.MaxHeight = 0;
+            _categoryAddOpen = false;
+            CategoryAddTrigger.IsVisible = true;
+            CategoryCancelBtn.IsVisible = true;
         }
-
-        private async void SaveCategoryClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-            var label = CategoryLabelInput.Text?.Trim();
-            if (string.IsNullOrEmpty(label)) return;
-
-            await using var db = new DataContext();
-
-            if (_editingCategoryId.HasValue)
-            {
-                var entity = await db.ProfileCategory.FindAsync(_editingCategoryId.Value);
-                if (entity != null)
-                {
-                    entity.Label = label;
-                    entity.Color = _selectedColor;
-                    await db.SaveChangesAsync();
-                }
-            }
-            else
-            {
-                db.ProfileCategory.Add(new DBProfileCategory
-                {
-                    Id = Guid.NewGuid(),
-                    Label = label,
-                    Color = _selectedColor,
-                });
-                await db.SaveChangesAsync();
-            }
-
-            CategoryFormOverlay.IsVisible = false;
-            await LoadCategories();
-        }
-
-        private void CloseCategoryFormClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-            => CategoryFormOverlay.IsVisible = false;
 
         // ── Couleurs ───────────────────────────────────────────────────────────
 
-        private void BuildColorSwatches()
+        private void BuildColorSwatches(WrapPanel panel, Action<string> onSelect)
         {
             foreach (var color in PresetColors)
             {
@@ -282,23 +528,58 @@ namespace Passall
                     CornerRadius = new Avalonia.CornerRadius(14),
                     Background = new SolidColorBrush(Color.Parse(c)),
                     Margin = new Avalonia.Thickness(0, 0, 8, 8),
-                    Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Hand),
+                    Cursor = new Cursor(StandardCursorType.Hand),
                     Tag = c,
                 };
-                swatch.PointerPressed += (_, _) => SelectColor(c);
-                CategoryColorSwatches.Children.Add(swatch);
+                swatch.PointerPressed += (_, _) => onSelect(c);
+                panel.Children.Add(swatch);
             }
         }
 
-        private void SelectColor(string color)
+        private void SelectCategoryColor(string color)
         {
-            _selectedColor = color;
-            foreach (var child in CategoryColorSwatches.Children.OfType<Border>())
+            _selectedCategoryColor = color;
+            foreach (var child in NewCategoryColorSwatches.Children.OfType<Border>())
             {
                 var isSelected = child.Tag is string tag && tag == color;
                 child.BorderThickness = new Avalonia.Thickness(isSelected ? 2.5 : 0);
                 child.BorderBrush = isSelected ? Brushes.White : null;
             }
+        }
+
+        // ── Utilitaires ────────────────────────────────────────────────────────
+
+        private static bool IsInsideButton(Avalonia.Visual? v)
+        {
+            var current = v;
+            while (current != null)
+            {
+                if (current is Button) return true;
+                current = current.GetVisualParent() as Avalonia.Visual;
+            }
+            return false;
+        }
+
+        /// <summary>Finds the first descendant of type T whose Tag equals the given string.</summary>
+        private static T? FindChildByTag<T>(Avalonia.Visual parent, string tag) where T : Control
+        {
+            foreach (var child in parent.GetVisualDescendants())
+            {
+                if (child is T ctrl && ctrl.Tag is string t && t == tag)
+                    return ctrl;
+            }
+            return null;
+        }
+
+        /// <summary>Finds a TextBox inside a visual whose Tag equals the given string.</summary>
+        private static TextBox? FindTextBoxByTag(Avalonia.Visual parent, string tag)
+            => FindChildByTag<TextBox>(parent, tag);
+
+        /// <summary>Sets the Text of a TextBox found by Tag inside the given parent.</summary>
+        private static void SetTextBoxByTag(Avalonia.Visual parent, string tag, string? value)
+        {
+            var box = FindTextBoxByTag(parent, tag);
+            if (box != null) box.Text = value ?? string.Empty;
         }
 
         // ── Import dictionnaire ────────────────────────────────────────────────

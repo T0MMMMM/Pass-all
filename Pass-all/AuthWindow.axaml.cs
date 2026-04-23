@@ -114,7 +114,7 @@ public partial class AuthWindow : Window
             return;
         }
 
-        new MainWindow().Show();
+        new MainWindow { CurrentUserId = user.Id }.Show();
         Close();
     }
 
@@ -171,7 +171,7 @@ public partial class AuthWindow : Window
         db.User.Add(user);
         db.SaveChanges();
 
-        new MainWindow().Show();
+        new MainWindow { CurrentUserId = user.Id }.Show();
         Close();
     }
 
