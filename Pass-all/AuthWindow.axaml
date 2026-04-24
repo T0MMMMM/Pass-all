@@ -222,8 +222,13 @@
 
       <!-- Footer -->
       <Border Grid.Row="2" Classes="footer">
-        <Grid ColumnDefinitions="*" Classes="footer-grid">
-          <TextBlock Text="Données chiffrées · Stockage local · Aucune connexion requise"
+        <Grid ColumnDefinitions="Auto,*" Classes="footer-grid">
+          <Button Grid.Column="0" Classes="icon-btn" Click="HelpClick" Cursor="Hand">
+            <ContentControl Classes="footer-icon">
+              <lucide:Lucide Kind="BadgeQuestionMark" Width="20" Height="20" />
+            </ContentControl>
+          </Button>
+          <TextBlock Grid.Column="1" Text="Données chiffrées · Stockage local · Aucune connexion requise"
                      Classes="footer-text" />
         </Grid>
       </Border>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aide — Pass-all</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ── Sommaire (sidebar gauche) ── -->
+<aside>
+  <p class="toc-title">Sommaire</p>
+  <ul class="toc">
+    <li><a href="#intro">À quoi sert Pass-all ?</a></li>
+    <li>
+      <a href="#auth">Connexion et inscription</a>
+      <ul class="toc-sub">
+        <li><a href="#auth-login">Se connecter</a></li>
+        <li><a href="#auth-register">Créer un compte</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#accounts">Mes comptes</a>
+      <ul class="toc-sub">
+        <li><a href="#accounts-list">Voir la liste</a></li>
+        <li><a href="#accounts-password">Afficher / copier</a></li>
+        <li><a href="#accounts-add">Ajouter un compte</a></li>
+        <li><a href="#accounts-edit">Modifier un compte</a></li>
+        <li><a href="#accounts-delete">Supprimer un compte</a></li>
+        <li><a href="#accounts-search">Rechercher et trier</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#categories">Catégories</a>
+      <ul class="toc-sub">
+        <li><a href="#cat-add">Créer une catégorie</a></li>
+        <li><a href="#cat-edit">Modifier une catégorie</a></li>
+        <li><a href="#cat-delete">Supprimer une catégorie</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#settings">Paramètres</a>
+      <ul class="toc-sub">
+        <li><a href="#settings-categories">Catégories</a></li>
+        <li><a href="#settings-dictionary">Dictionnaire</a></li>
+        <li><a href="#settings-logout">Se déconnecter</a></li>
+      </ul>
+    </li>
+    <li><a href="#security">Sécurité</a></li>
+  </ul>
+</aside>
+
+<!-- ── Contenu principal ── -->
+<main>
+
+  <div class="site-header">
+    <div class="badge">Documentation</div>
+    <h1>Aide — Pass-all</h1>
+    <p>Bienvenue dans l'aide de Pass-all, votre gestionnaire de mots de passe local et sécurisé.</p>
+  </div>
+
+  <!-- ══ 1. Introduction ══ -->
+  <section id="intro">
+    <h2><span class="icon">◆</span> À quoi sert Pass-all ?</h2>
+    <p>
+      Pass-all est une application qui vous permet de stocker tous vos mots de passe en un seul endroit,
+      protégé par un mot de passe maître que vous seul connaissez.
+    </p>
+    <p>
+      Vous n'avez plus besoin de retenir des dizaines de mots de passe ou de les noter sur un papier.
+      Pass-all les garde pour vous, chiffrés sur votre ordinateur — aucune donnée ne quitte votre machine.
+    </p>
+    <div class="tip">
+      <strong>Important :</strong> Choisissez un mot de passe maître solide et ne l'oubliez pas.
+      Il est la seule clé pour accéder à tous vos autres mots de passe.
+    </div>
+  </section>
+
+  <!-- ══ 2. Connexion & Inscription ══ -->
+  <section id="auth">
+    <h2><span class="icon">◆</span> Connexion et inscription</h2>
+    <p>C'est la première page que vous voyez au lancement de l'application.</p>
+
+    <h3 id="auth-login">Se connecter</h3>
+    <p>Si vous avez déjà un compte Pass-all sur cet ordinateur :</p>
+    <ol class="steps">
+      <li>Entrez votre <strong>identifiant</strong> dans le premier champ.</li>
+      <li>Entrez votre <strong>mot de passe maître</strong> dans le second champ.
+          Cliquez sur l'œil à droite pour l'afficher si besoin.</li>
+      <li>Cliquez sur <kbd>Se connecter</kbd>.</li>
+    </ol>
+    <div class="tip">Si votre identifiant ou mot de passe est incorrect, un message d'erreur s'affiche en rouge. Vérifiez vos saisies.</div>
+
+    <h3 id="auth-register">Créer un compte</h3>
+    <p>Si c'est votre première utilisation, cliquez sur le lien <em>« Pas encore de compte ? Créer un compte »</em> en bas du formulaire.</p>
+    <ol class="steps">
+      <li>Entrez votre <strong>nom complet</strong>.</li>
+      <li>Entrez votre <strong>adresse e-mail</strong>.</li>
+      <li>Choisissez un <strong>identifiant</strong> unique (ce sera votre nom d'utilisateur).</li>
+      <li>Choisissez un <strong>mot de passe maître</strong> fort. Entrez-le une seconde fois pour confirmer.</li>
+      <li>Cliquez sur <kbd>Créer mon compte</kbd>.</li>
+    </ol>
+    <div class="tip"><strong>Bon à savoir :</strong> Votre mot de passe maître n'est jamais stocké en clair — il est transformé de façon irréversible avant d'être sauvegardé.</div>
+  </section>
+
+  <!-- ══ 3. Mes comptes ══ -->
+  <section id="accounts">
+    <h2><span class="icon">◆</span> Mes comptes</h2>
+    <p>
+      C'est la page principale de l'application. Elle liste tous les comptes (sites, applications, services)
+      dont vous avez enregistré les identifiants et mots de passe.
+    </p>
+
+    <h3 id="accounts-list">Voir la liste de mes comptes</h3>
+    <p>
+      Chaque compte est affiché sous forme de carte avec :
+    </p>
+    <ul>
+      <li>L'<strong>initiale du service</strong> dans un cercle coloré (la couleur correspond à sa catégorie).</li>
+      <li>Le <strong>nom du service</strong> (ex : Gmail, Netflix…).</li>
+      <li>La <strong>catégorie</strong> à laquelle il appartient.</li>
+      <li>L'<strong>identifiant</strong> (votre nom d'utilisateur ou e-mail pour ce service).</li>
+      <li>Le <strong>mot de passe</strong>, masqué par défaut (affiché comme ••••••••).</li>
+    </ul>
+
+    <h3 id="accounts-password">Afficher ou copier un mot de passe</h3>
+    <div class="card">
+      <div class="card-title">Afficher le mot de passe</div>
+      <p>Cliquez sur l'icône <strong>œil</strong> à droite de la carte pour révéler le mot de passe. Cliquez à nouveau pour le masquer.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Copier le mot de passe</div>
+      <p>Cliquez sur l'icône <strong>copier</strong> (deux feuilles) pour copier le mot de passe dans le presse-papier. Vous pouvez ensuite le coller directement dans le site ou l'application concernée.</p>
+    </div>
+
+    <h3 id="accounts-add">Ajouter un compte</h3>
+    <ol class="steps">
+      <li>Cliquez sur le bouton <kbd>+ Ajouter un compte</kbd> en bas de la liste.</li>
+      <li>Remplissez les champs : nom du service, identifiant, e-mail, URL du site et mot de passe.</li>
+      <li>Choisissez une <strong>catégorie</strong> dans la liste déroulante (optionnel).</li>
+      <li>Cliquez sur <kbd>Enregistrer</kbd> pour sauvegarder.</li>
+    </ol>
+    <div class="tip">Cliquez sur l'œil dans le formulaire pour vérifier le mot de passe que vous saisissez avant de le sauvegarder.</div>
+
+    <h3 id="accounts-edit">Modifier un compte</h3>
+    <ol class="steps">
+      <li>Cliquez sur la carte du compte que vous voulez modifier.</li>
+      <li>Le formulaire de modification s'ouvre directement sous la carte.</li>
+      <li>Modifiez les champs souhaités.</li>
+      <li>Cliquez sur <kbd>Enregistrer</kbd> pour valider, ou <kbd>Annuler</kbd> pour ne rien changer.</li>
+    </ol>
+
+    <h3 id="accounts-delete">Supprimer un compte</h3>
+    <ol class="steps">
+      <li>Cliquez sur la carte du compte à supprimer pour ouvrir le formulaire.</li>
+      <li>Cliquez sur le bouton rouge <kbd>Supprimer</kbd>.</li>
+    </ol>
+    <div class="tip"><strong>Attention :</strong> La suppression est définitive. Le compte ne pourra pas être récupéré.</div>
+
+    <h3 id="accounts-search">Rechercher et trier</h3>
+    <div class="card">
+      <div class="card-title">Barre de recherche</div>
+      <p>Tapez le nom d'un service dans la barre <em>« Rechercher un compte… »</em> pour filtrer la liste en temps réel.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Trier la liste</div>
+      <p>Utilisez le menu déroulant à droite de la barre de recherche pour trier vos comptes :
+        <strong>Nom A→Z</strong>, <strong>Récents</strong> ou <strong>Catégorie</strong>.</p>
+    </div>
+  </section>
+
+  <!-- ══ 4. Catégories ══ -->
+  <section id="categories">
+    <h2><span class="icon">◆</span> Catégories</h2>
+    <p>
+      Les catégories vous permettent de regrouper vos comptes par thème (Réseaux sociaux, Banque, Travail, etc.)
+      et de les identifier visuellement grâce à une couleur.
+    </p>
+    <p>
+      Pour accéder à la gestion des catégories, ouvrez les <strong>Paramètres</strong> (icône engrenage en bas à droite)
+      puis cliquez sur <kbd>Gérer</kbd> à côté de « Catégories ».
+    </p>
+
+    <h3 id="cat-add">Créer une catégorie</h3>
+    <ol class="steps">
+      <li>Cliquez sur <kbd>+ Ajouter une catégorie</kbd>.</li>
+      <li>Donnez un <strong>nom</strong> à votre catégorie.</li>
+      <li>Choisissez une <strong>couleur</strong> parmi les 8 disponibles en cliquant sur un cercle coloré.</li>
+      <li>Cliquez sur <kbd>Enregistrer</kbd>.</li>
+    </ol>
+
+    <h3 id="cat-edit">Modifier une catégorie</h3>
+    <ol class="steps">
+      <li>Cliquez sur la carte de la catégorie à modifier.</li>
+      <li>Changez le nom et/ou la couleur.</li>
+      <li>Cliquez sur <kbd>Enregistrer</kbd>.</li>
+    </ol>
+
+    <h3 id="cat-delete">Supprimer une catégorie</h3>
+    <ol class="steps">
+      <li>Cliquez sur la carte de la catégorie à supprimer.</li>
+      <li>Cliquez sur le bouton rouge <kbd>Supprimer</kbd>.</li>
+    </ol>
+    <div class="tip">Supprimer une catégorie ne supprime pas les comptes qui lui étaient associés. Ils se retrouvent simplement sans catégorie.</div>
+
+    <h3 id="cat-back">Revenir à mes comptes</h3>
+    <p>Cliquez sur la flèche <kbd>←</kbd> en haut à gauche pour revenir à la liste de vos comptes.</p>
+  </section>
+
+  <!-- ══ 5. Paramètres ══ -->
+  <section id="settings">
+    <h2><span class="icon">◆</span> Paramètres</h2>
+    <p>Accédez aux paramètres en cliquant sur l'icône <strong>engrenage</strong> en bas à droite de l'application.</p>
+
+    <h3 id="settings-categories">Gérer les catégories</h3>
+    <p>Cliquez sur <kbd>Gérer</kbd> pour accéder à la page de gestion des catégories (voir section Catégories ci-dessus).</p>
+
+    <h3 id="settings-dictionary">Importer un dictionnaire</h3>
+    <p>
+      Cette fonctionnalité vous permet d'importer une liste de mots depuis un fichier <strong>CSV ou TXT</strong>.
+      Ces mots sont enregistrés dans votre base de données locale et peuvent servir à générer des mots de passe mémorisables.
+    </p>
+    <ol class="steps">
+      <li>Cliquez sur <kbd>Importer</kbd> à côté de « Dictionnaire ».</li>
+      <li>Sélectionnez un fichier <code>.csv</code> ou <code>.txt</code> sur votre ordinateur.
+          Chaque mot doit être sur une ligne séparée.</li>
+      <li>Une coche verte s'affiche brièvement pour confirmer que l'import s'est bien déroulé.</li>
+    </ol>
+    <div class="tip">Seuls les mots contenant des lettres, chiffres, espaces, tirets ou apostrophes sont importés. Les autres sont ignorés automatiquement.</div>
+
+    <h3 id="settings-logout">Se déconnecter</h3>
+    <p>Cliquez sur <kbd>Se déconnecter</kbd> pour fermer votre session et revenir à l'écran de connexion.
+       Vos données restent bien sûr sauvegardées.</p>
+  </section>
+
+  <!-- ══ 6. Sécurité ══ -->
+  <section id="security">
+    <h2><span class="icon">◆</span> Sécurité et confidentialité</h2>
+
+    <div class="card">
+      <div class="card-title">Stockage local uniquement</div>
+      <p>Toutes vos données (comptes, mots de passe, catégories) sont stockées sur votre ordinateur, dans un fichier de base de données local. Rien n'est envoyé sur Internet.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Mots de passe chiffrés</div>
+      <p>Vos mots de passe ne sont jamais stockés en clair. Ils sont chiffrés avant d'être sauvegardés, et déchiffrés uniquement au moment où vous en avez besoin.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Mot de passe maître</div>
+      <p>Votre mot de passe maître est converti en empreinte numérique irréversible (hachage). Même en accédant directement à la base de données, il est impossible de le retrouver.</p>
+    </div>
+    <div class="tip"><strong>Conseil :</strong> Verrouillez votre session Windows/macOS/Linux lorsque vous vous absentez de votre ordinateur pour protéger l'accès à l'application.</div>
+  </section>
+
+  <footer>
+    Pass-all — Aide en ligne &nbsp;·&nbsp; Données chiffrées &nbsp;·&nbsp; Stockage local &nbsp;·&nbsp; Aucune connexion requise
+  </footer>
+
+</main>
+
+<script>
+  // Highlight active TOC link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('aside a[href^="#"]');
+
+  function updateToc() {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 60) current = s.id;
+    });
+    links.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  }
+
+  window.addEventListener('scroll', updateToc, { passive: true });
+  updateToc();
+</script>
+
+</body>
+</html>

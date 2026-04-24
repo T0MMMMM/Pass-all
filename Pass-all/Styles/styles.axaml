@@ -27,7 +27,7 @@
 
   <!-- Voile sombre sur le fond -->
   <Style Selector="Border.dark-veil">
-    <Setter Property="Background" Value="#44000018" />
+    <Setter Property="Background" Value="{DynamicResource ColorVeil}" />
   </Style>
 
   <!-- ══════════════════════════════════════════════════════════════════
@@ -35,9 +35,9 @@
   ══════════════════════════════════════════════════════════════════ -->
 
   <Style Selector="Border.titlebar">
-    <Setter Property="Background" Value="#33FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorTitlebarBg}" />
     <Setter Property="Height" Value="44" />
-    <Setter Property="BorderBrush" Value="#18FFFFFF" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ColorTitlebarBorder}" />
     <Setter Property="BorderThickness" Value="0,0,0,1" />
   </Style>
 
@@ -116,8 +116,8 @@
   ══════════════════════════════════════════════════════════════════ -->
 
   <Style Selector="Border.sidebar">
-    <Setter Property="Background" Value="#14FFFFFF" />
-    <Setter Property="BorderBrush" Value="#1EFFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorSidebarBg}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ColorSidebarBorder}" />
     <Setter Property="BorderThickness" Value="0,0,1,0" />
   </Style>
 
@@ -145,7 +145,7 @@
   </Style>
 
   <Style Selector="Separator.sidebar-separator">
-    <Setter Property="Background" Value="#18FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorSeparator}" />
     <Setter Property="Height" Value="1" />
     <Setter Property="Margin" Value="0,14" />
   </Style>
@@ -172,10 +172,10 @@
     <Setter Property="Background" Value="Transparent" />
   </Style>
   <Style Selector="ListBox.category-list ListBoxItem:pointerover /template/ ContentPresenter">
-    <Setter Property="Background" Value="#14FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorCategoryHover}" />
   </Style>
   <Style Selector="ListBox.category-list ListBoxItem:selected /template/ ContentPresenter">
-    <Setter Property="Background" Value="#2EFFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorCategorySelected}" />
   </Style>
   <Style Selector="ListBox.category-list ListBoxItem:selected">
     <Setter Property="Foreground" Value="White" />
@@ -205,7 +205,7 @@
   </Style>
 
   <Style Selector="Border.stat-badge">
-    <Setter Property="Background" Value="#22FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorBadgeBg}" />
     <Setter Property="CornerRadius" Value="10" />
     <Setter Property="Padding" Value="8,2" />
   </Style>
@@ -237,8 +237,8 @@
 
   <!-- Container de la barre de recherche -->
   <Style Selector="Border.search-container">
-    <Setter Property="Background" Value="#2AFFFFFF" />
-    <Setter Property="BorderBrush" Value="#45FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorInputBg}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ColorInputBorder}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="CornerRadius" Value="10" />
     <Setter Property="Height" Value="40" />
@@ -250,8 +250,8 @@
     </Setter>
   </Style>
   <Style Selector="Border.search-container:focus-within">
-    <Setter Property="Background" Value="#3EFFFFFF" />
-    <Setter Property="BorderBrush" Value="#75FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorInputBgFocus}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ColorSearchBorderFocus}" />
   </Style>
 
   <Style Selector="TextBox.search">
@@ -270,7 +270,7 @@
   </Style>
 
   <Style Selector="Button.search-btn">
-    <Setter Property="Background" Value="#30FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorSearchBtnBg}" />
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="CornerRadius" Value="0,8,8,0" />
     <Setter Property="Width" Value="40" />
@@ -288,7 +288,7 @@
     <Setter Property="Background" Value="Transparent" />
   </Style>
   <Style Selector="Button.search-btn:pointerover">
-    <Setter Property="Background" Value="#50FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorSearchBtnHover}" />
   </Style>
 
   <Style Selector="ContentControl.search-icon">
@@ -299,9 +299,9 @@
 
   <!-- ComboBox de tri -->
   <Style Selector="ComboBox.sort-combo">
-    <Setter Property="Background" Value="#2AFFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorInputBg}" />
     <Setter Property="Foreground" Value="White" />
-    <Setter Property="BorderBrush" Value="#45FFFFFF" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ColorInputBorder}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="CornerRadius" Value="10" />
     <Setter Property="Height" Value="40" />
@@ -368,8 +368,8 @@
   </Style>
 
   <Style Selector="Border.count-badge">
-    <Setter Property="Background" Value="#22FFFFFF" />
-    <Setter Property="BorderBrush" Value="#33FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorBadgeBg}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ColorBadgeBorder}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="CornerRadius" Value="12" />
     <Setter Property="Padding" Value="12,4" />
@@ -389,9 +389,9 @@
   </Style>
 
   <Style Selector="Border.account-card">
-    <Setter Property="Background" Value="#18FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorCardBg}" />
     <Setter Property="CornerRadius" Value="14" />
-    <Setter Property="BorderBrush" Value="#38FFFFFF" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ColorCardBorder}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="Margin" Value="0,0,0,10" />
     <Setter Property="Padding" Value="16,14" />
@@ -404,8 +404,8 @@
     </Setter>
   </Style>
   <Style Selector="Border.account-card:pointerover">
-    <Setter Property="Background" Value="#2AFFFFFF" />
-    <Setter Property="BorderBrush" Value="#65FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorCardBgHover}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ColorCardBorderHover}" />
     <Setter Property="BoxShadow" Value="0 12 40 0 #55000000, 0 1 0 0 #45FFFFFF inset" />
   </Style>
 
@@ -473,7 +473,7 @@
   <Style Selector="ProgressBar.strength-bar">
     <Setter Property="Height" Value="3" />
     <Setter Property="CornerRadius" Value="2" />
-    <Setter Property="Background" Value="#20FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorStrengthBarBg}" />
     <Setter Property="Margin" Value="0,4,0,0" />
     <Setter Property="MaxWidth" Value="200" />
     <Setter Property="HorizontalAlignment" Value="Left" />
@@ -548,8 +548,8 @@
   ══════════════════════════════════════════════════════════════════ -->
 
   <Style Selector="Border.footer">
-    <Setter Property="Background" Value="#11FFFFFF" />
-    <Setter Property="BorderBrush" Value="#14FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorFooterBg}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ColorFooterBorder}" />
     <Setter Property="BorderThickness" Value="0,1,0,0" />
   </Style>
 
@@ -575,12 +575,12 @@
   ══════════════════════════════════════════════════════════════════ -->
 
   <Style Selector="Border.overlay-backdrop">
-    <Setter Property="Background" Value="#E8080814" />
+    <Setter Property="Background" Value="{DynamicResource ColorOverlayBackdrop}" />
   </Style>
 
   <Style Selector="Border.overlay-card">
-    <Setter Property="Background" Value="#1EFFFFFF" />
-    <Setter Property="BorderBrush" Value="#40FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorOverlayCardBg}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ColorOverlayCardBorder}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="CornerRadius" Value="16" />
     <Setter Property="Padding" Value="28,24" />
@@ -622,10 +622,10 @@
   </Style>
 
   <Style Selector="Border.help-info-box">
-    <Setter Property="Background" Value="#18FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorHelpBoxBg}" />
     <Setter Property="CornerRadius" Value="8" />
     <Setter Property="Padding" Value="14,10" />
-    <Setter Property="BorderBrush" Value="#22FFFFFF" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ColorHelpBoxBorder}" />
     <Setter Property="BorderThickness" Value="1" />
   </Style>
 
@@ -638,9 +638,9 @@
   <!-- ── Overlay Paramètres ── -->
 
   <Style Selector="Border.settings-row">
-    <Setter Property="Background" Value="#14FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorSettingsRowBg}" />
     <Setter Property="CornerRadius" Value="12" />
-    <Setter Property="BorderBrush" Value="#28FFFFFF" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ColorSettingsRowBorder}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="Padding" Value="16,12" />
   </Style>
@@ -663,9 +663,9 @@
   </Style>
 
   <Style Selector="NumericUpDown.settings-numeric">
-    <Setter Property="Background" Value="#2AFFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorInputBg}" />
     <Setter Property="Foreground" Value="White" />
-    <Setter Property="BorderBrush" Value="#45FFFFFF" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ColorInputBorder}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="CornerRadius" Value="8" />
     <Setter Property="Width" Value="90" />
@@ -674,7 +674,7 @@
 
   <!-- Bouton annuler dans les formulaires (sans border) -->
   <Style Selector="Button.cat-cancel-btn">
-    <Setter Property="Background" Value="#22FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorCancelBtnBg}" />
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="CornerRadius" Value="12" />
     <Setter Property="Height" Value="50" />
@@ -695,16 +695,16 @@
     <Setter Property="Background" Value="Transparent" />
   </Style>
   <Style Selector="Button.cat-cancel-btn:pointerover">
-    <Setter Property="Background" Value="#33FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorCancelBtnHover}" />
   </Style>
   <Style Selector="Button.cat-cancel-btn:pressed /template/ ContentPresenter">
     <Setter Property="Background" Value="Transparent" />
   </Style>
 
-  <!-- Bouton enregistrer dans les formulaires inline (avec border cyan) -->
+  <!-- Bouton enregistrer dans les formulaires inline (border blanche) -->
   <Style Selector="Button.form-save-btn">
-    <Setter Property="Background" Value="#CC1DB954" />
-    <Setter Property="BorderBrush" Value="#9922C55E" />
+    <Setter Property="Background" Value="{DynamicResource ColorSaveBtnBg}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ColorSaveBtnBorder}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="CornerRadius" Value="12" />
     <Setter Property="Height" Value="50" />
@@ -767,9 +767,9 @@
 
   <!-- ComboBox dans les formulaires (pleine largeur, hauteur input) -->
   <Style Selector="ComboBox.form-combo">
-    <Setter Property="Background" Value="#2AFFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorInputBg}" />
     <Setter Property="Foreground" Value="White" />
-    <Setter Property="BorderBrush" Value="#45FFFFFF" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ColorInputBorder}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="CornerRadius" Value="12" />
     <Setter Property="Height" Value="50" />
@@ -778,9 +778,9 @@
   </Style>
 
   <Style Selector="ComboBox.settings-combo">
-    <Setter Property="Background" Value="#2AFFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorInputBg}" />
     <Setter Property="Foreground" Value="White" />
-    <Setter Property="BorderBrush" Value="#45FFFFFF" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ColorInputBorder}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="CornerRadius" Value="8" />
     <Setter Property="Height" Value="36" />
@@ -840,8 +840,8 @@
 
   <!-- Conteneur de l'input -->
   <Style Selector="Border.login-input-container">
-    <Setter Property="Background" Value="#2AFFFFFF" />
-    <Setter Property="BorderBrush" Value="#45FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorInputBg}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ColorInputBorder}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="CornerRadius" Value="12" />
     <Setter Property="Height" Value="50" />
@@ -853,8 +853,8 @@
     </Setter>
   </Style>
   <Style Selector="Border.login-input-container:focus-within">
-    <Setter Property="Background" Value="#3EFFFFFF" />
-    <Setter Property="BorderBrush" Value="#8800D2FF" />
+    <Setter Property="Background" Value="{DynamicResource ColorInputBgFocus}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ColorInputBorderFocus}" />
   </Style>
 
   <!-- Icône à gauche de l'input -->
@@ -1040,8 +1040,8 @@
 
   <!-- Conteneur outer (toujours visible, border permanente) -->
   <Style Selector="Border.add-expand-card">
-    <Setter Property="Background" Value="#18FFFFFF" />
-    <Setter Property="BorderBrush" Value="#44FFFFFF" />
+    <Setter Property="Background" Value="{DynamicResource ColorCardBg}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ColorExpandCardBorder}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="CornerRadius" Value="14" />
     <Setter Property="Margin" Value="0,0,0,10" />

@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
@@ -179,5 +181,11 @@ public partial class AuthWindow : Window
     {
         RegErrorText.Text = message;
         RegErrorBox.IsVisible = true;
+    }
+
+    private void HelpClick(object? sender, RoutedEventArgs e)
+    {
+        var uri = new Uri(Path.Combine(AppContext.BaseDirectory, "aide", "index.html")).AbsoluteUri + "#auth";
+        Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true });
     }
 }

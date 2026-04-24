@@ -1,0 +1,70 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- ══ THÈME LIGHT (glassmorphism) ══════════════════════════════════════ -->
+  <!-- Toutes les couleurs structurelles de l'UI.                           -->
+  <!-- Pour changer de thème, swapper ce fichier contre DarkTheme.axaml.   -->
+
+  <!-- Voile sur l'image de fond -->
+  <SolidColorBrush x:Key="ColorVeil">#44000018</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorOverlayBackdrop">#E8080814</SolidColorBrush>
+
+  <!-- Titlebar -->
+  <SolidColorBrush x:Key="ColorTitlebarBg">#33FFFFFF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorTitlebarBorder">#18FFFFFF</SolidColorBrush>
+
+  <!-- Sidebar -->
+  <SolidColorBrush x:Key="ColorSidebarBg">#14FFFFFF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorSidebarBorder">#1EFFFFFF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorSeparator">#18FFFFFF</SolidColorBrush>
+
+  <!-- Liste de catégories -->
+  <SolidColorBrush x:Key="ColorCategoryHover">#14FFFFFF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorCategorySelected">#2EFFFFFF</SolidColorBrush>
+
+  <!-- Champs de saisie, ComboBox -->
+  <SolidColorBrush x:Key="ColorInputBg">#2AFFFFFF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorInputBgFocus">#3EFFFFFF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorInputBorder">#45FFFFFF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorInputBorderFocus">#8800D2FF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorSearchBorderFocus">#75FFFFFF</SolidColorBrush>
+
+  <!-- Bouton recherche -->
+  <SolidColorBrush x:Key="ColorSearchBtnBg">#30FFFFFF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorSearchBtnHover">#50FFFFFF</SolidColorBrush>
+
+  <!-- Cartes (comptes, add-expand, help-info-box) -->
+  <SolidColorBrush x:Key="ColorCardBg">#18FFFFFF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorCardBgHover">#2AFFFFFF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorCardBorder">#38FFFFFF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorCardBorderHover">#65FFFFFF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorExpandCardBorder">#44FFFFFF</SolidColorBrush>
+
+  <!-- Badges (count, stat) -->
+  <SolidColorBrush x:Key="ColorBadgeBg">#22FFFFFF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorBadgeBorder">#33FFFFFF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorStrengthBarBg">#20FFFFFF</SolidColorBrush>
+
+  <!-- Footer -->
+  <SolidColorBrush x:Key="ColorFooterBg">#11FFFFFF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorFooterBorder">#14FFFFFF</SolidColorBrush>
+
+  <!-- Overlay (paramètres, aide) -->
+  <SolidColorBrush x:Key="ColorOverlayCardBg">#1EFFFFFF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorOverlayCardBorder">#40FFFFFF</SolidColorBrush>
+
+  <!-- Boîte d'info aide -->
+  <SolidColorBrush x:Key="ColorHelpBoxBg">#18FFFFFF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorHelpBoxBorder">#22FFFFFF</SolidColorBrush>
+
+  <!-- Ligne de paramètre -->
+  <SolidColorBrush x:Key="ColorSettingsRowBg">#14FFFFFF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorSettingsRowBorder">#28FFFFFF</SolidColorBrush>
+
+  <!-- Boutons de formulaire -->
+  <SolidColorBrush x:Key="ColorSaveBtnBg">#CC1DB954</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorSaveBtnBorder">#AAFFFFFF</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorCancelBtnBg">#33DC2626</SolidColorBrush>
+  <SolidColorBrush x:Key="ColorCancelBtnHover">#55EF4444</SolidColorBrush>
+
+</ResourceDictionary>

@@ -36,5 +36,11 @@
     <ItemGroup>
       <Folder Include="Migrations\" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="aide\**">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
     
 </Project>

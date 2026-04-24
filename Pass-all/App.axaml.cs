@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.EntityFrameworkCore;
 using Passall.Modeles;
+using Passall.Utils;
 using SQLitePCL;
 
 namespace Passall
@@ -34,6 +35,7 @@ namespace Passall
                 }
                 catch (Exception e)
                 {
+                    Logger.Log(e);
                     Console.WriteLine(e);
                     throw;
                 }

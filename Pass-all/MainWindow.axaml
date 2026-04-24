@@ -579,6 +579,35 @@
           <Border Classes="settings-row">
             <Grid ColumnDefinitions="*,Auto">
               <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Test erreur" Classes="settings-row-title" />
+                <TextBlock Text="Déclenche une erreur pour tester le fichier de log" Classes="settings-row-desc" />
+              </StackPanel>
+              <Button Grid.Column="1" Classes="icon-btn" Click="TestErrorClick" VerticalAlignment="Center" Cursor="Hand">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <lucide:Lucide Kind="Bug" Width="15" Height="15" />
+                  <TextBlock Text="Tester" Classes="settings-row-title" VerticalAlignment="Center" />
+                </StackPanel>
+              </Button>
+            </Grid>
+          </Border>
+
+          <Border Classes="settings-row">
+            <Grid ColumnDefinitions="*,Auto">
+              <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Thème sombre" Classes="settings-row-title" />
+                <TextBlock Text="Basculer entre le thème verre et sombre" Classes="settings-row-desc" />
+              </StackPanel>
+              <ToggleSwitch x:Name="ThemeToggle" Grid.Column="1"
+                            Classes="settings-toggle"
+                            OnContent="" OffContent=""
+                            VerticalAlignment="Center"
+                            IsCheckedChanged="ThemeToggleChanged" />
+            </Grid>
+          </Border>
+
+          <Border Classes="settings-row">
+            <Grid ColumnDefinitions="*,Auto">
+              <StackPanel VerticalAlignment="Center">
                 <TextBlock Text="Déconnexion" Classes="settings-row-title" />
                 <TextBlock Text="Revenir à l'écran de connexion" Classes="settings-row-desc" />
               </StackPanel>

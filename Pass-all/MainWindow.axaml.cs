@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -100,13 +101,14 @@ namespace Passall
         {
             if (IsInsideButton(e.Source as Avalonia.Visual)) return;
             if (sender is not Border border || border.Tag is not DBUserProfile profile) return;
+            if (border == _openProfileCard) { CloseProfileInlineCard(); return; }
             _ = OpenProfileInlineEdit(border, profile);
         }
 
         private async Task OpenProfileInlineEdit(Border card, DBUserProfile profile)
         {
-            // Close any previously open inline card
             CloseProfileInlineCard();
+            if (_profileAddOpen) CloseProfileForm();
 
             var editForm = FindChildByTag<Border>(card, "edit-form");
             if (editForm == null) return;
@@ -156,6 +158,7 @@ namespace Passall
         private async void ToggleProfileAddClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             if (_profileAddOpen) { CloseProfileForm(); return; }
+            CloseProfileInlineCard();
 
             _profileEditId = null;
 
@@ -173,9 +176,6 @@ namespace Passall
             _profilePasswordVisible = false;
             ProfileFormEyeShow.IsVisible = true;
             ProfileFormEyeHide.IsVisible = false;
-
-            ProfileAddTrigger.IsVisible = false;
-            ProfileCancelBtn.IsVisible = true;
 
             ProfileAddForm.MaxHeight = 700;
             _profileAddOpen = true;
@@ -296,8 +296,6 @@ namespace Passall
         {
             ProfileAddForm.MaxHeight = 0;
             _profileAddOpen = false;
-            ProfileAddTrigger.IsVisible = true;
-            ProfileCancelBtn.IsVisible = true;
         }
 
         private void ToggleProfileFormPasswordClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -328,7 +326,11 @@ namespace Passall
         // ── Overlays ───────────────────────────────────────────────────────────
 
         private void HelpClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-            => HelpOverlay.IsVisible = true;
+        {
+            var anchor = CategoryView.IsVisible ? "#categories" : "#accounts";
+            var uri = new Uri(Path.Combine(AppContext.BaseDirectory, "aide", "index.html")).AbsoluteUri + anchor;
+            Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true });
+        }
 
         private void CloseHelpClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
             => HelpOverlay.IsVisible = false;
@@ -365,12 +367,14 @@ namespace Passall
         {
             if (IsInsideButton(e.Source as Avalonia.Visual)) return;
             if (sender is not Border border || border.Tag is not DBProfileCategory cat) return;
+            if (border == _openCategoryCard) { CloseCategoryInlineCard(); return; }
             OpenCategoryInlineEdit(border, cat);
         }
 
         private void OpenCategoryInlineEdit(Border card, DBProfileCategory cat)
         {
             CloseCategoryInlineCard();
+            if (_categoryAddOpen) CloseCategoryForm();
 
             var editForm = FindChildByTag<Border>(card, "cat-edit-form");
             if (editForm == null) return;
@@ -424,12 +428,10 @@ namespace Passall
         private void ToggleCategoryAddClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             if (_categoryAddOpen) { CloseCategoryForm(); return; }
+            CloseCategoryInlineCard();
 
             NewCategoryLabelInput.Text = string.Empty;
             SelectCategoryColor(PresetColors[0]);
-
-            CategoryAddTrigger.IsVisible = false;
-            CategoryCancelBtn.IsVisible = true;
 
             CategoryAddForm.MaxHeight = 400;
             _categoryAddOpen = true;
@@ -510,8 +512,6 @@ namespace Passall
         {
             CategoryAddForm.MaxHeight = 0;
             _categoryAddOpen = false;
-            CategoryAddTrigger.IsVisible = true;
-            CategoryCancelBtn.IsVisible = true;
         }
 
         // ── Couleurs ───────────────────────────────────────────────────────────
@@ -580,6 +580,28 @@ namespace Passall
         {
             var box = FindTextBoxByTag(parent, tag);
             if (box != null) box.Text = value ?? string.Empty;
+        }
+
+        // ── Thème ─────────────────────────────────────────────────────────────
+
+        private void ThemeToggleChanged(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            ThemeManager.SetTheme(ThemeToggle.IsChecked == true);
+        }
+
+        // ── Test logger ───────────────────────────────────────────────────────
+
+        private void TestErrorClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            try
+            {
+                int zero = 0;
+                _ = 1 / zero;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+            }
         }
 
         // ── Import dictionnaire ────────────────────────────────────────────────

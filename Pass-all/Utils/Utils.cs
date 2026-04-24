@@ -101,6 +101,21 @@ public static class Utils
     }
 }
 
+public static class Logger
+{
+    private static readonly string LogPath = Path.Combine(AppContext.BaseDirectory, "passall.log");
+
+    public static void Log(Exception ex)
+    {
+        try
+        {
+            var entry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {ex.GetType().Name}: {ex.Message}{Environment.NewLine}{ex.StackTrace}{Environment.NewLine}";
+            File.AppendAllText(LogPath, entry + Environment.NewLine);
+        }
+        catch { }
+    }
+}
+
 public class FirstLetterConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -117,7 +132,7 @@ public class StringToSolidColorBrushConverter : IValueConverter
         if (value is string colorStr)
         {
             try { return new SolidColorBrush(Color.Parse(colorStr)); }
-            catch { }
+            catch (Exception ex) { Logger.Log(ex); }
         }
         return Brushes.Transparent;
     }
