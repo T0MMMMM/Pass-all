@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Pass-all
+Comment=Gestionnaire de mots de passe
+Exec=Pass-all
+Icon=pass-all
+Type=Application
+Categories=Utility;Security;
+StartupWMClass=Pass-all

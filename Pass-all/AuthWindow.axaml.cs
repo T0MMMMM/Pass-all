@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using DllPass_all;
 using Passall.Modeles;
 
 namespace Passall;
@@ -105,7 +106,7 @@ public partial class AuthWindow : Window
             return;
         }
 
-        string hashed = Utils.Utils.Hash(password) ?? "";
+        string hashed = Cryptage.DllHash(password) ?? "";
 
         using var db = new DataContext();
         var user = db.User.FirstOrDefault(u => u.Login == username && u.Password == hashed);
@@ -164,7 +165,7 @@ public partial class AuthWindow : Window
             Name       = name,
             Email      = email,
             Login      = username,
-            Password   = Utils.Utils.Hash(password) ?? "",
+            Password   = Cryptage.DllHash(password) ?? "",
             SettingsId = settings.Id,
             Settings   = settings
         };
@@ -185,7 +186,6 @@ public partial class AuthWindow : Window
 
     private void HelpClick(object? sender, RoutedEventArgs e)
     {
-        var uri = new Uri(Path.Combine(AppContext.BaseDirectory, "aide", "index.html")).AbsoluteUri + "#auth";
-        Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true });
+        MainWindow.OpenHelp("#auth");
     }
 }

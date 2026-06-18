@@ -2,6 +2,10 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avalonia.Controls;
@@ -9,9 +13,11 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
+using DllPass_all;
 using Microsoft.EntityFrameworkCore;
 using Passall.Modeles;
 using Passall.Utils;
+using Constantes = Passall.Utils.Constantes;
 
 namespace Passall
 {
@@ -19,9 +25,16 @@ namespace Passall
     {
         public Guid CurrentUserId { get; set; }
 
+        private bool? _isSuperAdmin;
+
         private bool _profilePasswordVisible;
         private bool _profileAddOpen;
         private Guid? _profileEditId;
+
+        private System.Collections.Generic.List<DBUserProfile> _allProfiles = new();
+
+        private bool _passwordCheckEnabled = true;
+        private static readonly HttpClient _httpClient = new();
 
         private bool _categoryAddOpen;
         private Guid? _categoryEditId;
@@ -42,18 +55,116 @@ namespace Passall
 
         // ── Profils — liste ────────────────────────────────────────────────────
 
+        private async Task<bool> IsSuperAdminAsync()
+        {
+            if (_isSuperAdmin.HasValue) return _isSuperAdmin.Value;
+            await using var db = new DataContext();
+            var user = await db.User.FirstOrDefaultAsync(u => u.Id == CurrentUserId);
+            _isSuperAdmin = user?.Login == Constantes.SuperAdmin_Login;
+            return _isSuperAdmin.Value;
+        }
+
         private async Task LoadProfiles()
         {
+            var isAdmin = await IsSuperAdminAsync();
             await using var db = new DataContext();
-            var profiles = await db.UserProfile
-                .Include(p => p.Category)
-                .Where(p => p.UserId == CurrentUserId)
-                .OrderBy(p => p.Name)
-                .ToListAsync();
 
-            ProfileItemsControl.ItemsSource = profiles;
-            var count = profiles.Count;
+            IQueryable<DBUserProfile> q = db.UserProfile.Include(p => p.Category);
+            if (isAdmin) q = q.Include(p => p.User);
+            else q = q.Where(p => p.UserId == CurrentUserId);
+
+            var profiles = await q.ToListAsync();
+
+            if (isAdmin)
+            {
+                foreach (var p in profiles)
+                {
+                    p.ShowOwner = true;
+                    p.OwnerLabel = "par " + (p.User?.Name ?? p.User?.Login ?? "?");
+                }
+            }
+
+            if (_passwordCheckEnabled)
+                await CheckPasswordBreachesAsync(profiles);
+
+            _allProfiles = profiles;
+            ApplyFilterAndSort();
+        }
+
+        private void ApplyFilterAndSort()
+        {
+            if (ProfileItemsControl == null) return;
+
+            var query = SearchInput?.Text?.Trim() ?? string.Empty;
+            System.Collections.Generic.IEnumerable<DBUserProfile> view = _allProfiles;
+
+            if (!string.IsNullOrEmpty(query))
+            {
+                view = view.Where(p =>
+                    (p.Name?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (p.Login?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (p.Email?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (p.Url?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (p.Category?.Label?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false));
+            }
+
+            view = (SortCombo?.SelectedIndex ?? 0) switch
+            {
+                1 => view.OrderByDescending(p => p.Id),
+                2 => view.OrderBy(p => p.Category?.Label ?? string.Empty).ThenBy(p => p.Name),
+                _ => view.OrderBy(p => p.Name),
+            };
+
+            var list = view.ToList();
+            ProfileItemsControl.ItemsSource = list;
+            var count = list.Count;
             ProfileCountText.Text = count == 1 ? "1 compte" : $"{count} comptes";
+        }
+
+        private void SearchInputChanged(object? sender, Avalonia.Controls.TextChangedEventArgs e)
+            => ApplyFilterAndSort();
+
+        private void SortComboChanged(object? sender, SelectionChangedEventArgs e)
+            => ApplyFilterAndSort();
+
+        private async Task CheckPasswordBreachesAsync(System.Collections.Generic.List<DBUserProfile> profiles)
+        {
+            var tasks = profiles.Select(async profile =>
+            {
+                try
+                {
+                    var plain = Cryptage.DllDecrypt(profile.Password) ?? string.Empty;
+                    if (string.IsNullOrEmpty(plain)) return;
+
+                    var sha1 = Convert.ToHexString(SHA1.HashData(Encoding.UTF8.GetBytes(plain)));
+                    var prefix = sha1[..5];
+                    var suffix = sha1[5..];
+
+                    var response = await _httpClient.GetStringAsync(
+                        $"https://api.pwnedpasswords.com/range/{prefix}");
+
+                    var matched = false;
+                    foreach (var line in response.Split('\n'))
+                    {
+                        var parts = line.Trim().Split(':');
+                        if (parts.Length == 2 &&
+                            parts[0].Equals(suffix, StringComparison.OrdinalIgnoreCase) &&
+                            int.TryParse(parts[1], out var n))
+                        {
+                            profile.BreachCount = n;
+                            profile.IsBreached = n > 0;
+                            profile.IsSafe = n == 0;
+                            matched = true;
+                            break;
+                        }
+                    }
+                    if (!matched)
+                        profile.IsSafe = true;
+                }
+                catch { }
+            });
+
+            await Task.WhenAll(tasks);
         }
 
         private void ToggleProfilePasswordClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -65,12 +176,12 @@ namespace Passall
 
             var pwdBlock = grid.Children
                 .OfType<TextBlock>()
-                .FirstOrDefault(tb => Grid.GetColumn(tb) == 2);
+                .FirstOrDefault(tb => Grid.GetColumn(tb) == 3);
             if (pwdBlock == null) return;
 
             bool isHidden = pwdBlock.Text == "••••••••••••";
             pwdBlock.Text = isHidden
-                ? Utils.Utils.Decrypt(profile.Password) ?? "—"
+                ? Cryptage.DllDecrypt(profile.Password) ?? "—"
                 : "••••••••••••";
 
             if (btn.Content is Avalonia.Controls.Panel panel)
@@ -87,7 +198,7 @@ namespace Passall
         private async void CopyProfilePasswordClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             if (((Button)sender!).Tag is not DBUserProfile profile) return;
-            var decrypted = Utils.Utils.Decrypt(profile.Password) ?? string.Empty;
+            var decrypted = Cryptage.DllDecrypt(profile.Password) ?? string.Empty;
             var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
             if (clipboard != null)
                 await clipboard.SetTextAsync(decrypted);
@@ -100,6 +211,9 @@ namespace Passall
         private void ProfileCardPointerPressed(object? sender, PointerPressedEventArgs e)
         {
             if (IsInsideButton(e.Source as Avalonia.Visual)) return;
+            // Ignore les clics qui viennent du formulaire d'édition (ComboBox, TextBox…) —
+            // sinon ouvrir la liste déroulante de la catégorie ferme la carte.
+            if (IsInsideTaggedElement(e.Source as Avalonia.Visual, "edit-form")) return;
             if (sender is not Border border || border.Tag is not DBUserProfile profile) return;
             if (border == _openProfileCard) { CloseProfileInlineCard(); return; }
             _ = OpenProfileInlineEdit(border, profile);
@@ -121,7 +235,7 @@ namespace Passall
             SetTextBoxByTag(card, "Login", profile.Login);
             SetTextBoxByTag(card, "Email", profile.Email);
             SetTextBoxByTag(card, "Url", profile.Url);
-            SetTextBoxByTag(card, "Password", Utils.Utils.Decrypt(profile.Password) ?? string.Empty);
+            SetTextBoxByTag(card, "Password", Cryptage.DllDecrypt(profile.Password) ?? string.Empty);
 
             // Reset password to hidden
             var pwdBox = FindTextBoxByTag(card, "Password");
@@ -135,8 +249,11 @@ namespace Passall
             var categoryCombo = FindChildByTag<ComboBox>(card, "Category");
             if (categoryCombo != null)
             {
+                var isAdmin = await IsSuperAdminAsync();
                 await using var db = new DataContext();
-                var categories = await db.ProfileCategory.Where(c => c.UserId == CurrentUserId).OrderBy(c => c.Label).ToListAsync();
+                IQueryable<DBProfileCategory> cq = db.ProfileCategory;
+                if (!isAdmin) cq = cq.Where(c => c.UserId == CurrentUserId);
+                var categories = await cq.OrderBy(c => c.Label).ToListAsync();
                 categoryCombo.ItemsSource = categories;
                 categoryCombo.SelectedItem = categories.FirstOrDefault(c => c.Id == profile.CategoryId);
             }
@@ -162,8 +279,11 @@ namespace Passall
 
             _profileEditId = null;
 
+            var isAdmin = await IsSuperAdminAsync();
             await using var db = new DataContext();
-            var categories = await db.ProfileCategory.Where(c => c.UserId == CurrentUserId).OrderBy(c => c.Label).ToListAsync();
+            IQueryable<DBProfileCategory> cq = db.ProfileCategory;
+            if (!isAdmin) cq = cq.Where(c => c.UserId == CurrentUserId);
+            var categories = await cq.OrderBy(c => c.Label).ToListAsync();
             ProfileCategoryComboBox.ItemsSource = categories;
             ProfileCategoryComboBox.SelectedIndex = categories.Count > 0 ? 0 : -1;
 
@@ -205,7 +325,7 @@ namespace Passall
                 Login = ProfileLoginInput.Text?.Trim() ?? string.Empty,
                 Email = ProfileEmailInput.Text?.Trim() ?? string.Empty,
                 Url = ProfileUrlInput.Text?.Trim() ?? string.Empty,
-                Password = Utils.Utils.Encrypt(ProfilePasswordInput.Text) ?? string.Empty,
+                Password = Cryptage.DllEncrypt(ProfilePasswordInput.Text) ?? string.Empty,
                 UserId = userId,
                 CategoryId = category.Id,
             });
@@ -238,7 +358,7 @@ namespace Passall
                 entity.Url = FindTextBoxByTag(_openProfileCard, "Url")?.Text?.Trim() ?? string.Empty;
                 var pwd = FindTextBoxByTag(_openProfileCard, "Password")?.Text;
                 if (!string.IsNullOrEmpty(pwd))
-                    entity.Password = Utils.Utils.Encrypt(pwd) ?? entity.Password;
+                    entity.Password = Cryptage.DllEncrypt(pwd) ?? entity.Password;
                 entity.CategoryId = category.Id;
                 await db.SaveChangesAsync();
             }
@@ -306,6 +426,71 @@ namespace Passall
             ProfileFormEyeHide.IsVisible = _profilePasswordVisible;
         }
 
+        private async void GeneratePasswordClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            await using var db = new DataContext();
+            var words = await db.Dictionary.Select(d => d.Word).ToListAsync();
+            var password = PasswordGenerator.GenerateFromWords(words);
+            if (password == null) return;
+
+            ProfilePasswordInput.Text = password;
+            ProfilePasswordInput.PasswordChar = '\0';
+            _profilePasswordVisible = true;
+            ProfileFormEyeShow.IsVisible = false;
+            ProfileFormEyeHide.IsVisible = true;
+        }
+
+        // ── Indicateur de force du mot de passe ────────────────────────────────
+
+        private void ProfilePasswordChanged(object? sender, TextChangedEventArgs e)
+        {
+            var segments = new[]
+            {
+                ProfileStrengthSeg1, ProfileStrengthSeg2, ProfileStrengthSeg3, ProfileStrengthSeg4
+            };
+            UpdateStrengthMeter(segments, ProfileStrengthLabel, ProfilePasswordInput.Text);
+        }
+
+        private void InlinePasswordChanged(object? sender, TextChangedEventArgs e)
+        {
+            if (sender is not TextBox box) return;
+
+            var card = box.FindAncestorOfType<Border>();
+            while (card != null && card.Tag is not DBUserProfile)
+                card = card.FindAncestorOfType<Border>();
+            if (card == null) return;
+
+            var segments = new[]
+            {
+                FindChildByTag<Border>(card, "Strength1"),
+                FindChildByTag<Border>(card, "Strength2"),
+                FindChildByTag<Border>(card, "Strength3"),
+                FindChildByTag<Border>(card, "Strength4"),
+            };
+            var label = FindChildByTag<TextBlock>(card, "StrengthLabel");
+            UpdateStrengthMeter(segments, label, box.Text);
+        }
+
+        private static void UpdateStrengthMeter(Border?[] segments, TextBlock? label, string? password)
+        {
+            var result = PasswordStrength.Evaluate(password);
+            var active = (int)result.Level; // None=0 .. Strong=4
+            var onBrush = new SolidColorBrush(Color.Parse(result.Color));
+            var offBrush = new SolidColorBrush(Color.Parse(PasswordStrength.OffColor));
+
+            for (var i = 0; i < segments.Length; i++)
+            {
+                if (segments[i] != null)
+                    segments[i]!.Background = i < active ? onBrush : offBrush;
+            }
+
+            if (label != null)
+            {
+                label.Text = result.Label;
+                label.Foreground = onBrush;
+            }
+        }
+
         // ── Navigation ─────────────────────────────────────────────────────────
 
         private void OpenCategoriesClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -328,8 +513,24 @@ namespace Passall
         private void HelpClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             var anchor = CategoryView.IsVisible ? "#categories" : "#accounts";
-            var uri = new Uri(Path.Combine(AppContext.BaseDirectory, "aide", "index.html")).AbsoluteUri + anchor;
-            Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true });
+            OpenHelp(anchor);
+        }
+
+        internal static void OpenHelp(string anchor)
+        {
+            var uri = new Uri(Path.Combine(AppContext.BaseDirectory, "Help", "index.html")).AbsoluteUri + anchor;
+            try
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    Process.Start(new ProcessStartInfo("xdg-open", uri) { UseShellExecute = false });
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                    Process.Start(new ProcessStartInfo("open", uri) { UseShellExecute = false });
+                else
+                    // Windows : passer par `cmd /c start` préserve mieux le fragment "#anchor"
+                    // que ShellExecute direct (Edge ignore parfois le hash sur file://).
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start \"\" \"{uri}\"") { CreateNoWindow = true, UseShellExecute = false });
+            }
+            catch { }
         }
 
         private void CloseHelpClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -351,8 +552,23 @@ namespace Passall
 
         private async Task LoadCategories()
         {
+            var isAdmin = await IsSuperAdminAsync();
             await using var db = new DataContext();
-            var categories = await db.ProfileCategory.Where(c => c.UserId == CurrentUserId).OrderBy(c => c.Label).ToListAsync();
+
+            IQueryable<DBProfileCategory> q = db.ProfileCategory;
+            if (isAdmin) q = q.Include(c => c.User);
+            else q = q.Where(c => c.UserId == CurrentUserId);
+
+            var categories = await q.OrderBy(c => c.Label).ToListAsync();
+
+            if (isAdmin)
+            {
+                foreach (var c in categories)
+                {
+                    c.ShowOwner = true;
+                    c.OwnerLabel = "par " + (c.User?.Name ?? c.User?.Login ?? "?");
+                }
+            }
 
             CategoryItemsControl.ItemsSource = categories;
             var count = categories.Count;
@@ -366,6 +582,7 @@ namespace Passall
         private void CategoryCardPointerPressed(object? sender, PointerPressedEventArgs e)
         {
             if (IsInsideButton(e.Source as Avalonia.Visual)) return;
+            if (IsInsideTaggedElement(e.Source as Avalonia.Visual, "cat-edit-form")) return;
             if (sender is not Border border || border.Tag is not DBProfileCategory cat) return;
             if (border == _openCategoryCard) { CloseCategoryInlineCard(); return; }
             OpenCategoryInlineEdit(border, cat);
@@ -560,6 +777,17 @@ namespace Passall
             return false;
         }
 
+        private static bool IsInsideTaggedElement(Avalonia.Visual? v, string tag)
+        {
+            var current = v;
+            while (current != null)
+            {
+                if (current is Control ctrl && ctrl.Tag is string t && t == tag) return true;
+                current = current.GetVisualParent() as Avalonia.Visual;
+            }
+            return false;
+        }
+
         /// <summary>Finds the first descendant of type T whose Tag equals the given string.</summary>
         private static T? FindChildByTag<T>(Avalonia.Visual parent, string tag) where T : Control
         {
@@ -587,6 +815,12 @@ namespace Passall
         private void ThemeToggleChanged(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             ThemeManager.SetTheme(ThemeToggle.IsChecked == true);
+        }
+
+        private void PasswordCheckToggleChanged(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            _passwordCheckEnabled = PasswordCheckToggle.IsChecked == true;
+            _ = LoadProfiles();
         }
 
         // ── Test logger ───────────────────────────────────────────────────────

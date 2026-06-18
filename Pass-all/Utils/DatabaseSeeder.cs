@@ -1,4 +1,5 @@
 using System;
+using DllPass_all;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Passall.Utils;
@@ -14,7 +15,7 @@ public static class DatabaseSeeder
         Guid settingsId = Guid.NewGuid();
         Guid userId = Guid.NewGuid();
 
-        string encryptedPassword = Utils.Hash(Constantes.SuperAdmin_Password) ?? "";
+        string encryptedPassword = Cryptage.DllHash(Constantes.SuperAdmin_Password) ?? "";
 
         // Insert default settings for the super admin
         migrationBuilder.InsertData(

@@ -16,6 +16,7 @@
     <li>
       <a href="#auth">Connexion et inscription</a>
       <ul class="toc-sub">
+        <li><a href="#auth-admin">Compte administrateur</a></li>
         <li><a href="#auth-login">Se connecter</a></li>
         <li><a href="#auth-register">Créer un compte</a></li>
       </ul>
@@ -44,6 +45,8 @@
       <ul class="toc-sub">
         <li><a href="#settings-categories">Catégories</a></li>
         <li><a href="#settings-dictionary">Dictionnaire</a></li>
+        <li><a href="#settings-hibp">Vérification des fuites</a></li>
+        <li><a href="#settings-theme">Thème sombre</a></li>
         <li><a href="#settings-logout">Se déconnecter</a></li>
       </ul>
     </li>
@@ -81,6 +84,17 @@
   <section id="auth">
     <h2><span class="icon">◆</span> Connexion et inscription</h2>
     <p>C'est la première page que vous voyez au lancement de l'application.</p>
+
+    <h3 id="auth-admin">Compte administrateur par défaut</h3>
+    <p>Un compte d'administration est préconfiguré dans la base au premier lancement. Utilisez-le pour découvrir l'application sans créer de compte :</p>
+    <div class="card">
+      <div class="card-title">Identifiants</div>
+      <ul>
+        <li><strong>Identifiant :</strong> <kbd>superadmin</kbd></li>
+        <li><strong>Mot de passe maître :</strong> <kbd>superadmin123</kbd></li>
+      </ul>
+    </div>
+    <div class="tip"><strong>À retenir :</strong> ces identifiants sont publics — ne stockez aucune donnée sensible sur ce compte. Pour un usage réel, créez votre propre compte via <em>« Créer un compte »</em>.</div>
 
     <h3 id="auth-login">Se connecter</h3>
     <p>Si vous avez déjà un compte Pass-all sur cet ordinateur :</p>
@@ -135,10 +149,12 @@
     </div>
 
     <h3 id="accounts-add">Ajouter un compte</h3>
+    <div class="tip"><strong>Prérequis :</strong> au moins une <strong>catégorie</strong> doit exister avant de pouvoir créer un compte — la liste déroulante du formulaire est sinon vide et l'enregistrement est bloqué. Si c'est votre première utilisation, commencez par <a href="#cat-add">créer une catégorie</a>.</div>
     <ol class="steps">
       <li>Cliquez sur le bouton <kbd>+ Ajouter un compte</kbd> en bas de la liste.</li>
       <li>Remplissez les champs : nom du service, identifiant, e-mail, URL du site et mot de passe.</li>
-      <li>Choisissez une <strong>catégorie</strong> dans la liste déroulante (optionnel).</li>
+      <li>Choisissez une <strong>catégorie</strong> dans la liste déroulante (obligatoire).</li>
+      <li>Astuce : cliquez sur l'icône <kbd>⇄</kbd> pour générer un mot de passe aléatoire depuis le dictionnaire importé.</li>
       <li>Cliquez sur <kbd>Enregistrer</kbd> pour sauvegarder.</li>
     </ol>
     <div class="tip">Cliquez sur l'œil dans le formulaire pour vérifier le mot de passe que vous saisissez avant de le sauvegarder.</div>
@@ -178,14 +194,19 @@
       et de les identifier visuellement grâce à une couleur.
     </p>
     <p>
-      Pour accéder à la gestion des catégories, ouvrez les <strong>Paramètres</strong> (icône engrenage en bas à droite)
-      puis cliquez sur <kbd>Gérer</kbd> à côté de « Catégories ».
+      <strong>Accès :</strong> il n'y a pas de bouton direct dans la liste des comptes. Pour ouvrir l'écran des catégories :
     </p>
+    <ol class="steps">
+      <li>Cliquez sur l'icône <strong>engrenage ⚙</strong> en bas à droite (footer) pour ouvrir les <strong>Paramètres</strong>.</li>
+      <li>Sur la ligne « Catégories », cliquez sur <kbd>Gérer</kbd>.</li>
+      <li>Vous arrivez sur la liste des catégories — la flèche <kbd>←</kbd> en haut à gauche permet de revenir aux comptes.</li>
+    </ol>
+    <div class="tip"><strong>Bon à savoir :</strong> créez au moins une catégorie avant d'ajouter votre premier compte, sinon le formulaire d'ajout de compte ne pourra pas être validé.</div>
 
     <h3 id="cat-add">Créer une catégorie</h3>
     <ol class="steps">
-      <li>Cliquez sur <kbd>+ Ajouter une catégorie</kbd>.</li>
-      <li>Donnez un <strong>nom</strong> à votre catégorie.</li>
+      <li>Une fois sur l'écran <em>Catégories</em>, cliquez sur <kbd>+ Ajouter une catégorie</kbd> en bas de la liste.</li>
+      <li>Donnez un <strong>nom</strong> à votre catégorie (ex : Réseaux sociaux, Banque, Travail…).</li>
       <li>Choisissez une <strong>couleur</strong> parmi les 8 disponibles en cliquant sur un cercle coloré.</li>
       <li>Cliquez sur <kbd>Enregistrer</kbd>.</li>
     </ol>
@@ -229,6 +250,20 @@
     </ol>
     <div class="tip">Seuls les mots contenant des lettres, chiffres, espaces, tirets ou apostrophes sont importés. Les autres sont ignorés automatiquement.</div>
 
+    <h3 id="settings-hibp">Vérification des mots de passe (HaveIBeenPwned)</h3>
+    <p>
+      Cette option compare chaque mot de passe à la base publique <em>HaveIBeenPwned</em> pour détecter les fuites connues.
+      Chaque carte affiche alors un badge <strong>vert « Safe »</strong> ou <strong>rouge avec le nombre de fuites</strong>.
+    </p>
+    <ul>
+      <li>Activée par défaut au premier lancement.</li>
+      <li>Nécessite une connexion Internet (sinon les badges restent vides).</li>
+      <li>Confidentialité : seuls les 5 premiers caractères du hash SHA-1 sont envoyés (modèle <em>k-anonymity</em>) — le mot de passe en clair ne quitte jamais votre machine.</li>
+    </ul>
+
+    <h3 id="settings-theme">Thème sombre</h3>
+    <p>L'interrupteur <strong>Thème sombre</strong> bascule entre le rendu verre (glassmorphisme) par défaut et un thème sombre opaque, plus reposant pour les yeux en faible luminosité.</p>
+
     <h3 id="settings-logout">Se déconnecter</h3>
     <p>Cliquez sur <kbd>Se déconnecter</kbd> pour fermer votre session et revenir à l'écran de connexion.
        Vos données restent bien sûr sauvegardées.</p>
@@ -260,6 +295,19 @@
 </main>
 
 <script>
+  // Scroll vers l'ancre passée en hash — workaround pour Edge sur file:// qui
+  // n'applique pas toujours le scroll automatique au chargement.
+  function scrollToHash() {
+    if (!location.hash || location.hash.length < 2) return;
+    const target = document.getElementById(location.hash.slice(1));
+    if (target) target.scrollIntoView({ block: 'start' });
+  }
+  // On tente plusieurs fois : à DOMContentLoaded, à load, et après un court délai
+  // (Edge sur file:// charge parfois la page après l'événement load).
+  document.addEventListener('DOMContentLoaded', scrollToHash);
+  window.addEventListener('load', () => { scrollToHash(); setTimeout(scrollToHash, 100); });
+  window.addEventListener('hashchange', scrollToHash);
+
   // Highlight active TOC link on scroll
   const sections = document.querySelectorAll('section[id]');
   const links = document.querySelectorAll('aside a[href^="#"]');

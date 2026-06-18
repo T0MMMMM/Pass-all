@@ -268,6 +268,14 @@
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="BorderBrush" Value="Transparent" />
   </Style>
+  <Style Selector="TextBox.search /template/ TextBlock#PART_Watermark">
+    <Setter Property="Foreground" Value="#88FFFFFF" />
+    <Setter Property="Opacity" Value="1" />
+  </Style>
+  <Style Selector="TextBox.search:focus /template/ TextBlock#PART_Watermark">
+    <Setter Property="Foreground" Value="#66FFFFFF" />
+    <Setter Property="Opacity" Value="1" />
+  </Style>
 
   <Style Selector="Button.search-btn">
     <Setter Property="Background" Value="{DynamicResource ColorSearchBtnBg}" />
@@ -469,6 +477,15 @@
     <Setter Property="Margin" Value="0,2,0,0" />
   </Style>
 
+  <!-- Badge propriétaire affiché uniquement en mode super-admin -->
+  <Style Selector="TextBlock.account-owner">
+    <Setter Property="Foreground" Value="#00D2FF" />
+    <Setter Property="FontSize" Value="10" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="LetterSpacing" Value="0.5" />
+    <Setter Property="Margin" Value="0,3,0,0" />
+  </Style>
+
   <!-- Barre de force du mot de passe -->
   <Style Selector="ProgressBar.strength-bar">
     <Setter Property="Height" Value="3" />
@@ -498,6 +515,52 @@
     <Setter Property="Margin" Value="20,0" />
   </Style>
 
+  <!-- Badge Safe (HIBP — aucune fuite) -->
+  <Style Selector="Border.safe-badge">
+    <Setter Property="Background" Value="#2200CC66" />
+    <Setter Property="BorderBrush" Value="#4400CC66" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="6" />
+    <Setter Property="Padding" Value="6,3" />
+    <Setter Property="Margin" Value="8,0" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="ContentControl.safe-icon">
+    <Setter Property="Foreground" Value="#44DD88" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="TextBlock.safe-text">
+    <Setter Property="Foreground" Value="#44DD88" />
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <!-- Badge de fuite (HIBP) -->
+  <Style Selector="Border.breach-badge">
+    <Setter Property="Background" Value="#33FF4444" />
+    <Setter Property="BorderBrush" Value="#66FF4444" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="6" />
+    <Setter Property="Padding" Value="6,3" />
+    <Setter Property="Margin" Value="8,0" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="ContentControl.breach-icon">
+    <Setter Property="Foreground" Value="#FF6B6B" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="TextBlock.breach-count">
+    <Setter Property="Foreground" Value="#FF6B6B" />
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
   <!-- Actions sur la carte (œil, copier) -->
   <Style Selector="StackPanel.account-actions">
     <Setter Property="Spacing" Value="4" />
@@ -518,6 +581,7 @@
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="Padding" Value="4" />
+    <Setter Property="Foreground" Value="White" />
   </Style>
   <Style Selector="Button.icon-btn /template/ ContentPresenter">
     <Setter Property="Background" Value="Transparent" />
@@ -880,6 +944,16 @@
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="BorderBrush" Value="Transparent" />
   </Style>
+  <!-- Watermark (placeholder) : forcer une teinte visible sur le fond sombre,
+       y compris quand l'input a le focus (le FluentTheme passe sinon en gris foncé). -->
+  <Style Selector="TextBox.login-input /template/ TextBlock#PART_Watermark">
+    <Setter Property="Foreground" Value="#88FFFFFF" />
+    <Setter Property="Opacity" Value="1" />
+  </Style>
+  <Style Selector="TextBox.login-input:focus /template/ TextBlock#PART_Watermark">
+    <Setter Property="Foreground" Value="#66FFFFFF" />
+    <Setter Property="Opacity" Value="1" />
+  </Style>
 
   <!-- Bouton œil (afficher/masquer mdp) -->
   <Style Selector="Button.login-eye-btn">
@@ -1108,6 +1182,21 @@
         <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="CubicEaseOut" />
       </Transitions>
     </Setter>
+  </Style>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       INDICATEUR DE FORCE DU MOT DE PASSE
+  ══════════════════════════════════════════════════════════════════ -->
+
+  <Style Selector="Border.strength-seg">
+    <Setter Property="Height" Value="5" />
+    <Setter Property="CornerRadius" Value="3" />
+    <Setter Property="Background" Value="#22FFFFFF" />
+  </Style>
+
+  <Style Selector="TextBlock.strength-label">
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="FontWeight" Value="SemiBold" />
   </Style>
 
 </Styles>

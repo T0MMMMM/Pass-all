@@ -9,8 +9,10 @@
         mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
         x:Class="Passall.MainWindow"
         Title="Pass-all"
+        Icon="avares://Pass-all/Assets/logo.png"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
         WindowStartupLocation="CenterScreen"
         Width="900" Height="600">
 
@@ -21,6 +23,7 @@
   <Window.Resources>
     <utils:StringToSolidColorBrushConverter x:Key="ColorBrushConverter" />
     <utils:FirstLetterConverter x:Key="FirstLetterConverter" />
+    <utils:BreachCountConverter x:Key="BreachCountConverter" />
   </Window.Resources>
 
   <Panel>
@@ -42,7 +45,7 @@
           <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Classes="search-area">
             <Border Grid.Column="0" Classes="search-container">
               <Grid ColumnDefinitions="*,Auto">
-                <TextBox Grid.Column="0" Classes="search" Watermark="Rechercher un compte..." />
+                <TextBox Grid.Column="0" x:Name="SearchInput" Classes="search" Watermark="Rechercher un compte..." TextChanged="SearchInputChanged" />
                 <Button Grid.Column="1" Classes="search-btn" Cursor="Hand">
                   <ContentControl Classes="search-icon">
                     <lucide:Lucide Kind="Search" Width="15" Height="15" />
@@ -50,7 +53,7 @@
                 </Button>
               </Grid>
             </Border>
-            <ComboBox Grid.Column="1" Classes="sort-combo" SelectedIndex="0" Cursor="Hand">
+            <ComboBox Grid.Column="1" x:Name="SortCombo" Classes="sort-combo" SelectedIndex="0" Cursor="Hand" SelectionChanged="SortComboChanged">
               <ComboBoxItem>Nom A→Z</ComboBoxItem>
               <ComboBoxItem>Récents</ComboBoxItem>
               <ComboBoxItem>Catégorie</ComboBoxItem>
@@ -72,7 +75,7 @@
                   <Border Classes="account-card" Tag="{Binding}" PointerPressed="ProfileCardPointerPressed" Cursor="Hand">
                     <StackPanel>
 
-                      <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                      <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
 
                         <!-- Icône : couleur de catégorie + première lettre du nom -->
                         <Border Grid.Column="0"
@@ -88,13 +91,35 @@
                           <TextBlock Text="{Binding Name}" Classes="account-name" />
                           <TextBlock Text="{Binding Category.Label}" Classes="account-category" />
                           <TextBlock Text="{Binding Login}" Classes="account-login" />
+                          <TextBlock Text="{Binding OwnerLabel}" Classes="account-owner" IsVisible="{Binding ShowOwner}" />
                         </StackPanel>
 
+                        <!-- Badge HIBP (Safe ou Fuite) -->
+                        <Panel Grid.Column="2" VerticalAlignment="Center">
+                          <Border Classes="safe-badge" IsVisible="{Binding IsSafe}">
+                            <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                              <ContentControl Classes="safe-icon">
+                                <lucide:Lucide Kind="ShieldCheck" Width="13" Height="13" />
+                              </ContentControl>
+                              <TextBlock Text="Safe" Classes="safe-text" />
+                            </StackPanel>
+                          </Border>
+                          <Border Classes="breach-badge" IsVisible="{Binding IsBreached}">
+                            <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                              <ContentControl Classes="breach-icon">
+                                <lucide:Lucide Kind="ShieldAlert" Width="13" Height="13" />
+                              </ContentControl>
+                              <TextBlock Text="{Binding BreachCount, Converter={StaticResource BreachCountConverter}}"
+                                         Classes="breach-count" />
+                            </StackPanel>
+                          </Border>
+                        </Panel>
+
                         <!-- Mot de passe -->
-                        <TextBlock Grid.Column="2" Text="••••••••••••" Classes="account-password" />
+                        <TextBlock Grid.Column="3" Text="••••••••••••" Classes="account-password" />
 
                         <!-- Actions -->
-                        <StackPanel Grid.Column="3" Orientation="Horizontal" Classes="account-actions">
+                        <StackPanel Grid.Column="4" Orientation="Horizontal" Classes="account-actions">
                           <Button Classes="icon-btn" Tag="{Binding}" Click="ToggleProfilePasswordClick" Cursor="Hand">
                             <Panel>
                               <ContentControl Classes="account-action-icon">
@@ -178,7 +203,7 @@
                                 <ContentControl Grid.Column="0" Classes="login-input-icon">
                                   <lucide:Lucide Kind="Lock" Width="15" Height="15" />
                                 </ContentControl>
-                                <TextBox Grid.Column="1" Tag="Password" Classes="login-input" Watermark="Mot de passe…" PasswordChar="●" />
+                                <TextBox Grid.Column="1" Tag="Password" Classes="login-input" Watermark="Mot de passe…" PasswordChar="●" TextChanged="InlinePasswordChanged" />
                                 <Button Grid.Column="2" Classes="login-eye-btn" Click="ToggleCardPasswordClick" Cursor="Hand">
                                   <Panel>
                                     <ContentControl Tag="eye-show" Classes="login-eye-icon">
@@ -191,6 +216,15 @@
                                 </Button>
                               </Grid>
                             </Border>
+                            <StackPanel Margin="0,8,0,0" Spacing="5">
+                              <Grid ColumnDefinitions="*,*,*,*" Height="5">
+                                <Border Grid.Column="0" Tag="Strength1" Classes="strength-seg" Margin="0,0,3,0" />
+                                <Border Grid.Column="1" Tag="Strength2" Classes="strength-seg" Margin="0,0,3,0" />
+                                <Border Grid.Column="2" Tag="Strength3" Classes="strength-seg" Margin="0,0,3,0" />
+                                <Border Grid.Column="3" Tag="Strength4" Classes="strength-seg" />
+                              </Grid>
+                              <TextBlock Tag="StrengthLabel" Classes="strength-label" />
+                            </StackPanel>
                           </StackPanel>
 
                           <StackPanel Classes="login-field">
@@ -299,11 +333,11 @@
                     <StackPanel Classes="login-field">
                       <TextBlock Text="Mot de passe" Classes="login-label" />
                       <Border Classes="login-input-container">
-                        <Grid ColumnDefinitions="Auto,*,Auto">
+                        <Grid ColumnDefinitions="Auto,*,Auto,Auto">
                           <ContentControl Grid.Column="0" Classes="login-input-icon">
                             <lucide:Lucide Kind="Lock" Width="15" Height="15" />
                           </ContentControl>
-                          <TextBox Grid.Column="1" x:Name="ProfilePasswordInput" Classes="login-input" Watermark="Mot de passe…" PasswordChar="●" />
+                          <TextBox Grid.Column="1" x:Name="ProfilePasswordInput" Classes="login-input" Watermark="Mot de passe…" PasswordChar="●" TextChanged="ProfilePasswordChanged" />
                           <Button Grid.Column="2" Classes="login-eye-btn" Click="ToggleProfileFormPasswordClick" Cursor="Hand">
                             <Panel>
                               <ContentControl x:Name="ProfileFormEyeShow" Classes="login-eye-icon">
@@ -314,8 +348,22 @@
                               </ContentControl>
                             </Panel>
                           </Button>
+                          <Button Grid.Column="3" Classes="login-eye-btn" Click="GeneratePasswordClick" Cursor="Hand" ToolTip.Tip="Générer un mot de passe">
+                            <ContentControl Classes="login-eye-icon">
+                              <lucide:Lucide Kind="Shuffle" Width="15" Height="15" />
+                            </ContentControl>
+                          </Button>
                         </Grid>
                       </Border>
+                      <StackPanel Margin="0,8,0,0" Spacing="5">
+                        <Grid ColumnDefinitions="*,*,*,*" Height="5">
+                          <Border Grid.Column="0" x:Name="ProfileStrengthSeg1" Classes="strength-seg" Margin="0,0,3,0" />
+                          <Border Grid.Column="1" x:Name="ProfileStrengthSeg2" Classes="strength-seg" Margin="0,0,3,0" />
+                          <Border Grid.Column="2" x:Name="ProfileStrengthSeg3" Classes="strength-seg" Margin="0,0,3,0" />
+                          <Border Grid.Column="3" x:Name="ProfileStrengthSeg4" Classes="strength-seg" />
+                        </Grid>
+                        <TextBlock x:Name="ProfileStrengthLabel" Classes="strength-label" />
+                      </StackPanel>
                     </StackPanel>
 
                     <StackPanel Classes="login-field">
@@ -377,8 +425,10 @@
                         <Border Grid.Column="0" Width="36" Height="36" CornerRadius="18"
                                 VerticalAlignment="Center"
                                 Background="{Binding Color, Converter={StaticResource ColorBrushConverter}}" />
-                        <TextBlock Grid.Column="1" Text="{Binding Label}"
-                                   Classes="account-name" Margin="14,0,0,0" VerticalAlignment="Center" />
+                        <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center" Spacing="2">
+                          <TextBlock Text="{Binding Label}" Classes="account-name" />
+                          <TextBlock Text="{Binding OwnerLabel}" Classes="account-owner" IsVisible="{Binding ShowOwner}" />
+                        </StackPanel>
                       </Grid>
 
                       <!-- Formulaire d'édition inline de catégorie -->
@@ -534,6 +584,16 @@
 
     <!-- Paramètres -->
     <Panel x:Name="SettingsOverlay" IsVisible="False">
+      <Panel.Resources>
+        <!-- Force les couleurs du ToggleSwitch pour les thèmes clairs (AppImage Linux) -->
+        <SolidColorBrush x:Key="ToggleSwitchFillOff" Color="#44FFFFFF"/>
+        <SolidColorBrush x:Key="ToggleSwitchFillOn" Color="#CC00D2FF"/>
+        <SolidColorBrush x:Key="ToggleSwitchStrokeOff" Color="#66FFFFFF"/>
+        <SolidColorBrush x:Key="ToggleSwitchStrokeOn" Color="Transparent"/>
+        <SolidColorBrush x:Key="ToggleSwitchKnobFillOff" Color="#CCFFFFFF"/>
+        <SolidColorBrush x:Key="ToggleSwitchKnobFillOn" Color="White"/>
+        <SolidColorBrush x:Key="ToggleSwitchKnobFillDisabled" Color="#55FFFFFF"/>
+      </Panel.Resources>
       <Border Classes="overlay-backdrop" />
       <Border Classes="overlay-card" VerticalAlignment="Center" HorizontalAlignment="Center">
         <StackPanel Classes="overlay-content">
@@ -588,6 +648,21 @@
                   <TextBlock Text="Tester" Classes="settings-row-title" VerticalAlignment="Center" />
                 </StackPanel>
               </Button>
+            </Grid>
+          </Border>
+
+          <Border Classes="settings-row">
+            <Grid ColumnDefinitions="*,Auto">
+              <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Vérification des mots de passe" Classes="settings-row-title" />
+                <TextBlock Text="Vérifie les fuites via HaveIBeenPwned (réseau requis)" Classes="settings-row-desc" />
+              </StackPanel>
+              <ToggleSwitch x:Name="PasswordCheckToggle" Grid.Column="1"
+                            Classes="settings-toggle"
+                            OnContent="" OffContent=""
+                            IsChecked="True"
+                            VerticalAlignment="Center"
+                            IsCheckedChanged="PasswordCheckToggleChanged" />
             </Grid>
           </Border>
 

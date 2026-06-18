@@ -16,4 +16,7 @@ public class DBProfileCategory
     public Guid UserId { get; set; }
     [ForeignKey(nameof(UserId))]
     public DBUser User { get; set; }
+
+    [NotMapped] public bool ShowOwner { get; set; }
+    [NotMapped] public string OwnerLabel { get; set; } = string.Empty;
 }

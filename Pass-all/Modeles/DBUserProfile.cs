@@ -23,4 +23,12 @@ public class DBUserProfile
     public Guid CategoryId { get; set; }
     [ForeignKey(nameof(CategoryId))]
     public DBProfileCategory Category { get; set; }
+
+    [NotMapped] public int BreachCount { get; set; }
+    [NotMapped] public bool IsBreached { get; set; }
+    [NotMapped] public bool IsSafe { get; set; }
+
+    // Affichés uniquement en mode super-admin.
+    [NotMapped] public bool ShowOwner { get; set; }
+    [NotMapped] public string OwnerLabel { get; set; } = string.Empty;
 }
